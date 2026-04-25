@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+:root {
+  --app-header-height: 68px;
+  --app-content-top-gap: 2.5rem;
+  --app-sticky-top: calc(var(--app-header-height) + var(--app-content-top-gap));
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  font-feature-settings: normal;
+  -webkit-font-smoothing: antialiased;
+  color: #132939;
+  background: #F0F4FF;
+}
+
+/* Page background */
+.page-bg {
+  background: #F0F4FF;
+}
+
+/* Custom scrollbar */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #D9D9D9;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #BFBFBF;
+}
+
+/* Hide scrollbars on picker columns */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Utility — subtle grid pattern for panels */
+.grid-dots {
+  background-image: radial-gradient(rgba(20, 49, 107, 0.08) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Reusable gradient text */
+.text-gradient-brand {
+  background: linear-gradient(90deg, #1B557E 0%, #4F5AE0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hide number input arrows */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Continuous rotation — used by the file-upload spinner glyph */
+@keyframes spin-cw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spin {
+  animation: spin-cw 0.9s linear infinite;
+  transform-origin: center center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Glassmorphism CTA bar + buttons
+   Frosted translucent surface, gradient hairline border, layered
+   shadows for depth, and subtle sheen highlights on hover.
+   ───────────────────────────────────────────────────────────── */
+
+.glass-cta {
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.52) 100%
+    );
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,     /* top inner highlight */
+    0 -1px 0 0 rgba(190, 208, 244, 0.25) inset,    /* bottom inner shade */
+    0 24px 60px -20px rgba(37, 90, 195, 0.28),     /* soft brand glow */
+    0 12px 32px -12px rgba(16, 24, 40, 0.18),      /* elevation */
+    0 2px 4px -2px rgba(16, 24, 40, 0.06);         /* tight contact */
+  position: sticky;
+}
+
+/* Subtle moving sheen line drawn on top of the glass surface */
+.glass-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(190, 217, 244, 0.35) 0%, transparent 55%),
+    radial-gradient(120% 80% at 100% 100%, rgba(180, 168, 240, 0.22) 0%, transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* ---------- Reset (glass outline) ---------- */
+.glass-btn-reset {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  border: 1.5px solid #255AC3;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.85) inset,
+    0 6px 16px -6px rgba(37, 90, 195, 0.18),
+    0 2px 6px -2px rgba(37, 90, 195, 0.10);
+  transition: box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+}
+.glass-btn-reset:hover {
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 12px 26px -10px rgba(37, 90, 195, 0.38),
+    0 4px 10px -4px rgba(37, 90, 195, 0.18);
+}
+.glass-btn-reset:focus-visible {
+  outline: none;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 0 0 3px rgba(37, 90, 195, 0.25),
+    0 12px 26px -10px rgba(37, 90, 195, 0.38);
+}
+
+/* ---------- Save (mint gradient) ---------- */
+.glass-btn-save {
+  background: linear-gradient(135deg, #BDF5C2 0%, #A9EFAF 45%, #8FE099 100%);
+  border: 1px solid rgba(14, 73, 19, 0.12);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.85) inset,
+    0 -1px 0 0 rgba(14, 73, 19, 0.08) inset,
+    0 10px 24px -10px rgba(53, 130, 23, 0.42),
+    0 3px 8px -2px rgba(53, 130, 23, 0.18);
+  transition: box-shadow 0.35s ease, filter 0.35s ease;
+}
+.glass-btn-save:hover {
+  filter: saturate(112%) brightness(1.02);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 0 rgba(14, 73, 19, 0.10) inset,
+    0 16px 34px -12px rgba(53, 130, 23, 0.55),
+    0 6px 14px -4px rgba(53, 130, 23, 0.25);
+}
+.glass-btn-save:focus-visible {
+  outline: none;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 0 0 3px rgba(53, 130, 23, 0.28),
+    0 16px 34px -12px rgba(53, 130, 23, 0.55);
+}
+
+/* ---------- Forward (brand gradient + halo) ---------- */
+.glass-btn-forward {
+  background: linear-gradient(135deg, #3A74DD 0%, #255AC3 50%, #1B4AA8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.35) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.20) inset,
+    0 12px 28px -10px rgba(37, 90, 195, 0.55),
+    0 4px 10px -2px rgba(37, 90, 195, 0.28);
+  transition: box-shadow 0.35s ease, filter 0.35s ease;
+}
+.glass-btn-forward:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.45) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.22) inset,
+    0 18px 40px -12px rgba(37, 90, 195, 0.75),
+    0 6px 16px -4px rgba(37, 90, 195, 0.38);
+}
+.glass-btn-forward:focus-visible {
+  outline: none;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 3px rgba(37, 90, 195, 0.35),
+    0 18px 40px -12px rgba(37, 90, 195, 0.75);
+}
+
+/* ---------- Shared sheen sweep ---------- */
+.glass-btn-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: overlay;
+}
+.group:hover .glass-btn-sheen {
+  transform: translateX(120%);
+}
