@@ -95,26 +95,28 @@ export function AdvancedDetailsContent() {
       className="w-full"
     >
       <div
-        className="flex flex-wrap items-center w-full"
-        style={{ columnGap: 120, rowGap: 24 }}
+        className="w-full"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gap: '24px 28px',
+        }}
       >
         {/* Left: amount inputs */}
-        <div className="flex flex-wrap items-end" style={{ columnGap: 24, rowGap: 24 }}>
-          <div className="flex flex-col items-start" style={{ gap: 8, width: 300 }}>
-            <EditableLabel>Travel Charges</EditableLabel>
-            <AmountInput value={travel} onChange={setTravel} placeholder="Enter Amount" />
-          </div>
-          <div className="flex flex-col items-start" style={{ gap: 8, width: 300 }}>
-            <EditableLabel>Accommodation Charges</EditableLabel>
-            <AmountInput
-              value={accommodation}
-              onChange={setAccommodation}
-              placeholder="Enter Amount"
-            />
-          </div>
+        <div className="flex flex-col items-start" style={{ gap: 8 }}>
+          <EditableLabel>Travel Charges</EditableLabel>
+          <AmountInput value={travel} onChange={setTravel} placeholder="Enter Amount" />
+        </div>
+        <div className="flex flex-col items-start" style={{ gap: 8 }}>
+          <EditableLabel>Accommodation Charges</EditableLabel>
+          <AmountInput
+            value={accommodation}
+            onChange={setAccommodation}
+            placeholder="Enter Amount"
+          />
         </div>
 
-        {/* Right: totals card */}
+        {/* Right: totals card — spans remaining space */}
         <div
           className="flex items-center shrink-0"
           style={{
@@ -122,7 +124,6 @@ export function AdvancedDetailsContent() {
             borderRadius: 16,
             padding: 12,
             gap: 8,
-            width: 497,
             maxWidth: '100%',
           }}
         >

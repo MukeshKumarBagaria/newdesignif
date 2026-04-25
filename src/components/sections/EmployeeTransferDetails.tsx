@@ -197,54 +197,55 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
       style={{ gap: 32 }}
     >
       <div className="flex flex-col items-start w-full" style={{ gap: 24 }}>
-        <div className="flex flex-col items-start" style={{ gap: 24 }}>
-          <div className="flex items-center flex-wrap" style={{ gap: 80 }}>
-            <div className="flex items-center" style={{ gap: 24 }}>
-              <FieldGroup width={300} label="Transfer From" required delay={0}>
-                <EditableField
-                  value={transferFrom}
-                  onChange={setTransferFrom}
-                  placeholder="Old Office"
-                  ariaLabel="Transfer From"
-                />
-              </FieldGroup>
-              <FieldGroup width={300} label="Transfer To" required delay={0.04}>
-                <EditableField
-                  value={transferTo}
-                  onChange={setTransferTo}
-                  placeholder="New Office"
-                  ariaLabel="Transfer To"
-                />
-              </FieldGroup>
-            </div>
-            <FieldGroup width={200} label="Relieving Date" required delay={0.08}>
-              <EditableField
-                value={relievingDate}
-                onChange={setRelievingDate}
-                placeholder="dd / mm / yyyy"
-                ariaLabel="Relieving Date"
-              />
-            </FieldGroup>
-          </div>
+        <div
+          className="w-full"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '24px 28px',
+          }}
+        >
+          <FieldGroup width="auto" label="Transfer From" required delay={0}>
+            <EditableField
+              value={transferFrom}
+              onChange={setTransferFrom}
+              placeholder="Old Office"
+              ariaLabel="Transfer From"
+            />
+          </FieldGroup>
+          <FieldGroup width="auto" label="Transfer To" required delay={0.04}>
+            <EditableField
+              value={transferTo}
+              onChange={setTransferTo}
+              placeholder="New Office"
+              ariaLabel="Transfer To"
+            />
+          </FieldGroup>
+          <FieldGroup width="auto" label="Relieving Date" required delay={0.08}>
+            <EditableField
+              value={relievingDate}
+              onChange={setRelievingDate}
+              placeholder="dd / mm / yyyy"
+              ariaLabel="Relieving Date"
+            />
+          </FieldGroup>
 
-          <div className="flex items-center flex-wrap" style={{ gap: 24 }}>
-            <FieldGroup width={300} label="Type of Transfer" required delay={0.12}>
-              <EditableField
-                value={typeOfTransfer}
-                onChange={setTypeOfTransfer}
-                placeholder="Inter/Intra district"
-                ariaLabel="Type of Transfer"
-              />
-            </FieldGroup>
-            <FieldGroup width={300} label="Transfer Order Number" required delay={0.16}>
-              <EditableField
-                value={orderNo}
-                onChange={setOrderNo}
-                placeholder="Order No"
-                ariaLabel="Transfer Order Number"
-              />
-            </FieldGroup>
-          </div>
+          <FieldGroup width="auto" label="Type of Transfer" required delay={0.12}>
+            <EditableField
+              value={typeOfTransfer}
+              onChange={setTypeOfTransfer}
+              placeholder="Inter/Intra district"
+              ariaLabel="Type of Transfer"
+            />
+          </FieldGroup>
+          <FieldGroup width="auto" label="Transfer Order Number" required delay={0.16}>
+            <EditableField
+              value={orderNo}
+              onChange={setOrderNo}
+              placeholder="Order No"
+              ariaLabel="Transfer Order Number"
+            />
+          </FieldGroup>
         </div>
 
         <div className="flex items-stretch w-full" style={{ gap: 12, borderRadius: 16 }}>
@@ -306,13 +307,12 @@ function FieldGroup({
   label,
   required,
   children,
-  width,
   delay = 0,
 }: {
   label: string;
   required?: boolean;
   children: ReactNode;
-  width: number;
+  width?: number | string;
   delay?: number;
 }) {
   return (
@@ -321,7 +321,7 @@ function FieldGroup({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.28 }}
       className="flex flex-col items-start min-w-0"
-      style={{ gap: 8, width }}
+      style={{ gap: 8 }}
     >
       <EditableLabel required={required}>{label}</EditableLabel>
       {children}

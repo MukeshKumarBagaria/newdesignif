@@ -16,9 +16,9 @@ type Props = { onNext: () => void };
 
 type FieldProps = { label: ReactNode; required?: boolean; width?: number | string; children: ReactNode };
 
-function FieldGroup({ label, required, width, children }: FieldProps) {
+function FieldGroup({ label, required, children }: FieldProps) {
   return (
-    <div className="flex flex-col items-start shrink-0" style={{ gap: 8, width }}>
+    <div className="flex flex-col items-start min-w-0" style={{ gap: 8 }}>
       <EditableLabel required={required}>{label}</EditableLabel>
       {children}
     </div>
@@ -287,68 +287,76 @@ export function TransferTravelJourneyContent({ onNext }: Props) {
       className="flex flex-col w-full"
       style={{ gap: 32 }}
     >
-      <div className="flex flex-col w-full" style={{ gap: 49 }}>
+      <div className="flex flex-col w-full" style={{ gap: 40 }}>
         {/* ─── From Place ─── */}
-        <div className="flex flex-col w-full" style={{ gap: 16 }}>
+        <div className="flex flex-col w-full" style={{ gap: 20 }}>
           <SectionBanner>From Place</SectionBanner>
 
-          <div className="flex flex-col w-full" style={{ gap: 24 }}>
-            <div className="flex items-end w-full justify-between">
-              <FieldGroup label="Place" width={400}>
-                <TextField value={fromPlace} onChange={setFromPlace} placeholder="Enter Place" />
-              </FieldGroup>
-              <div className="flex items-end" style={{ gap: 24 }}>
-                <FieldGroup label="Travel Start Date" width={180}>
-                  <DatePicker value={fromDate} onChange={setFromDate} placeholder="Enter Date" />
-                </FieldGroup>
-                <FieldGroup label="Travel Start Time" required width={180}>
-                  <TimePicker value={fromTime} onChange={setFromTime} placeholder="Enter Time" />
-                </FieldGroup>
-              </div>
-            </div>
+          <div
+            className="w-full"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.5fr 1fr 1fr',
+              gap: '24px 28px',
+            }}
+          >
+            <FieldGroup label="Place">
+              <TextField value={fromPlace} onChange={setFromPlace} placeholder="Enter Place" />
+            </FieldGroup>
+            <FieldGroup label="Travel Start Date">
+              <DatePicker value={fromDate} onChange={setFromDate} placeholder="Enter Date" />
+            </FieldGroup>
+            <FieldGroup label="Travel Start Time" required>
+              <TimePicker value={fromTime} onChange={setFromTime} placeholder="Enter Time" />
+            </FieldGroup>
 
-            <div className="flex items-end w-full justify-between">
-              <FieldGroup label="Conveyance Mode" required width={400}>
-                <Dropdown value={conveyance} options={CONVEYANCE_OPTIONS} onChange={setConveyance} />
-              </FieldGroup>
-              <FieldGroup label="Vehicles mode" required width={356}>
-                <div className="flex items-center w-full" style={{ gap: 16 }}>
-                  <PillCard
-                    label="Government"
-                    active={vehicle === 'gov'}
-                    width={170}
-                    onClick={() => setVehicle('gov')}
-                  />
-                  <PillCard
-                    label="Private"
-                    active={vehicle === 'private'}
-                    width={170}
-                    onClick={() => setVehicle('private')}
-                  />
-                </div>
-              </FieldGroup>
+            <FieldGroup label="Conveyance Mode" required>
+              <Dropdown value={conveyance} options={CONVEYANCE_OPTIONS} onChange={setConveyance} />
+            </FieldGroup>
+            <div className="flex flex-col items-start min-w-0" style={{ gap: 8, gridColumn: 'span 2' }}>
+              <EditableLabel required>Vehicles mode</EditableLabel>
+              <div className="flex items-center" style={{ gap: 16 }}>
+                <PillCard
+                  label="Government"
+                  active={vehicle === 'gov'}
+                  width={170}
+                  onClick={() => setVehicle('gov')}
+                />
+                <PillCard
+                  label="Private"
+                  active={vehicle === 'private'}
+                  width={170}
+                  onClick={() => setVehicle('private')}
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {/* ─── To Place ─── */}
-        <div className="flex flex-col w-full" style={{ gap: 16 }}>
+        <div className="flex flex-col w-full" style={{ gap: 20 }}>
           <SectionBanner>To Place</SectionBanner>
 
-          <div className="flex items-end w-full justify-between">
-            <FieldGroup label="Place" width={400}>
+          <div
+            className="w-full"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.5fr 1fr 1fr',
+              gap: '24px 28px',
+            }}
+          >
+            <FieldGroup label="Place">
               <TextField value={toPlace} onChange={setToPlace} placeholder="Enter Place" />
             </FieldGroup>
-            <div className="flex items-end" style={{ gap: 24 }}>
-              <FieldGroup label="Travel End Date" width={180}>
-                <DatePicker value={toDate} onChange={setToDate} placeholder="Enter Date" />
-              </FieldGroup>
-              <FieldGroup label="Travel End Time" required width={180}>
-                <TimePicker value={toTime} onChange={setToTime} placeholder="Enter Time" />
-              </FieldGroup>
-            </div>
-            <FieldGroup label="Is shifting of luggage by truck?" required width={262}>
-              <div className="flex items-center w-full" style={{ gap: 24 }}>
+            <FieldGroup label="Travel End Date">
+              <DatePicker value={toDate} onChange={setToDate} placeholder="Enter Date" />
+            </FieldGroup>
+            <FieldGroup label="Travel End Time" required>
+              <TimePicker value={toTime} onChange={setToTime} placeholder="Enter Time" />
+            </FieldGroup>
+
+            <FieldGroup label="Is shifting of luggage by truck?" required>
+              <div className="flex items-center" style={{ gap: 16 }}>
                 <PillCard
                   label="Yes"
                   active={luggage === 'yes'}
