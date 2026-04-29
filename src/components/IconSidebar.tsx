@@ -48,6 +48,7 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
       style={{
         position: 'sticky',
         top: 'var(--app-sticky-top)',
+        gap: '1rem',
         height: 'calc(100vh - var(--app-sticky-top) - 1.25rem)',
         justifyContent: 'space-between',
       }}
