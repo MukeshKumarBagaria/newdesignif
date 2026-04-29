@@ -49,8 +49,7 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
         position: 'sticky',
         top: 'var(--app-sticky-top)',
         gap: '1rem',
-        height: 'calc(100vh - var(--app-sticky-top) - 1.25rem)',
-        justifyContent: 'space-between',
+        maxHeight: 'calc(100vh - var(--app-sticky-top) - 1.25rem)',
       }}
     >
       {/* ───────────── Top card: search + floating toggle + worklist ───────────── */}
