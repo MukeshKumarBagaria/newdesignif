@@ -44,11 +44,13 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
     <motion.aside
       animate={{ width: expanded ? '17.4375rem' : '7.4375rem' }}
       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      className="shrink-0 flex flex-col items-start self-start sticky z-30"
+      className="shrink-0 flex flex-col items-start z-30"
       style={{
         position: 'sticky',
         top: 'var(--app-sticky-top)',
         gap: '1rem',
+        height: 'calc(100vh - var(--app-sticky-top) - 1.25rem)',
+        justifyContent: 'space-between',
       }}
     >
       {/* ───────────── Top card: search + floating toggle + worklist ───────────── */}
