@@ -52,43 +52,44 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
         justifyContent: 'space-between',
       }}
     >
-      {/* ───────────── Top card: toggle + search + worklist ───────────── */}
-      <div className="w-full rounded-[20px] bg-white ring-1 ring-grey-50 shadow-soft p-4 flex flex-col items-end gap-4">
-        {/* Top row: search (collapsed only) + toggle */}
-        <div className="flex items-center justify-end gap-3 self-stretch">
-          {!expanded && (
-            <motion.button
-              key="search-icon-inline"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.18 }}
-              className="w-10 h-10 bg-[#e9effb] border border-[#5a72a5] rounded-full flex items-center justify-center hover:bg-[#dde4f5] transition"
-              aria-label="Search"
-            >
-              <img src="/assets/magnifier.svg" alt="" className="w-5 h-5" />
-            </motion.button>
-          )}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={onToggle}
-            aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
-            className="w-10 h-10 rounded-full bg-white ring-1 ring-grey-100 flex items-center justify-center text-brand-500 hover:bg-brand-10 transition"
-          >
-            <img src="/assets/sidebar-toggle.svg" alt="" className="w-6 h-6" />
-          </motion.button>
-        </div>
+      {/* ───────────── Top card: search + floating toggle + worklist ───────────── */}
+      <div className="relative w-full rounded-[20px] bg-white ring-1 ring-grey-50 shadow-soft p-4 flex flex-col items-end gap-4 overflow-visible">
+        {/* Floating collapse/expand toggle — pinned to top-right, half-outside the card.
+            Modern "tab handle" treatment: layered shadow + subtle gradient ring,
+            translates outward so it visually anchors the card edge. */}
+        <motion.button
+          whileHover={{ scale: 1.05, x: expanded ? 22 : 22 }}
+          whileTap={{ scale: 0.92 }}
+          onClick={onToggle}
+          aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
+          className="absolute z-10 w-11 h-11 rounded-full flex items-center justify-center text-brand-500 transition-colors"
+          style={{
+            top: 14,
+            right: -22,
+            background: 'linear-gradient(135deg, #FFFFFF 0%, #F4F7FE 100%)',
+            border: '1px solid #BED0F4',
+            boxShadow:
+              '0 8px 20px -8px rgba(37, 90, 195, 0.35), 0 2px 4px -1px rgba(20, 49, 107, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+          }}
+        >
+          <motion.img
+            animate={{ rotate: expanded ? 0 : 180 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            src="/assets/sidebar-toggle.svg"
+            alt=""
+            className="w-6 h-6"
+          />
+        </motion.button>
 
-        {/* Expanded search bar (full width below toggle) */}
-        <AnimatePresence initial={false}>
-          {expanded && (
+        {/* Search row — fills card; toggle floats outside, so we reserve a small right inset */}
+        <div className="flex items-center self-stretch" style={{ paddingRight: 28 }}>
+          {expanded ? (
             <motion.div
               key="search-input"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full flex items-center overflow-hidden"
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.22 }}
+              className="w-full flex items-center"
             >
               <div className="flex-1 min-w-0 h-10 bg-white border border-[#5a72a5] border-r-0 rounded-l-[16px] px-3 flex items-center">
                 <input
@@ -100,8 +101,19 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
                 <img src="/assets/magnifier.svg" alt="" className="w-5 h-5" />
               </button>
             </motion.div>
+          ) : (
+            <motion.button
+              key="search-icon-inline"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.18 }}
+              className="w-10 h-10 bg-[#e9effb] border border-[#5a72a5] rounded-full flex items-center justify-center hover:bg-[#dde4f5] transition"
+              aria-label="Search"
+            >
+              <img src="/assets/magnifier.svg" alt="" className="w-5 h-5" />
+            </motion.button>
           )}
-        </AnimatePresence>
+        </div>
 
         {/* Worklist */}
         <AnimatePresence initial={false} mode="wait">
