@@ -48,7 +48,7 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
       style={{
         position: 'sticky',
         top: 'var(--app-sticky-top)',
-        gap: '2.5rem',
+        gap: '1rem',
       }}
     >
       {/* ───────────── Top card: search + floating toggle + worklist ───────────── */}
