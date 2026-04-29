@@ -13,7 +13,12 @@ import { ProfileMenu } from './ProfileMenu';
  * - notification dot: #ff6a00 / text #4c2000
  * - profile pill: #1f1c4a, rounded 16px
  */
-export function Header() {
+type HeaderProps = {
+  stepperLayout?: 'side' | 'top';
+  onChangeStepperLayout?: (layout: 'side' | 'top') => void;
+};
+
+export function Header({ stepperLayout = 'side', onChangeStepperLayout }: HeaderProps) {
   const [lang, setLang] = useState<'en' | 'hi'>('en');
   const [fontStep, setFontStep] = useState<0 | 1 | 2>(1);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -190,7 +195,11 @@ export function Header() {
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 top-[58px] z-50"
                 >
-                  <ProfileMenu onClose={() => setProfileOpen(false)} />
+                  <ProfileMenu
+                    onClose={() => setProfileOpen(false)}
+                    stepperLayout={stepperLayout}
+                    onChangeStepperLayout={onChangeStepperLayout}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
