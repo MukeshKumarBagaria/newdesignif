@@ -1,37 +1,49 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Header } from './components/Header';
 import { IconSidebar } from './components/IconSidebar';
-import { StepperPanel, type StepperItem } from './components/StepperPanel';
 import { SectionCard } from './components/SectionCard';
 import { CaretRight } from './components/icons';
-import { EmployeeDetailsContent } from './components/sections/EmployeeDetails';
-import { EmployeeTransferDetailsContent } from './components/sections/EmployeeTransferDetails';
-import { ReimbursementDetailsContent } from './components/sections/ReimbursementDetails';
-import { TransferTravelJourneyContent } from './components/sections/TransferTravelJourney';
-import { DocumentsAttachmentsContent } from './components/sections/DocumentsAttachments';
-import { AdvancedDetailsContent } from './components/sections/AdvancedDetails';
+import {
+  badgeFor,
+  emptyChildForm,
+  emptyMajorForm,
+  isChildComplete,
+  isMajorComplete,
+  type ChildHeadState,
+  type MajorHeadState,
+} from './components/account-head/data';
+import { HierarchyBadge } from './components/account-head/primitives';
+import { MajorHeadSection } from './components/account-head/MajorHeadSection';
+import { SubMajorHeadSection } from './components/account-head/SubMajorHeadSection';
+import { MinorHeadSection } from './components/account-head/MinorHeadSection';
 
-type SectionId = 's1' | 's2' | 's3' | 's4' | 's5' | 's6';
+type SectionId = 'major' | 'subMajor' | 'minor';
 
 const sectionDefs: { id: SectionId; index: string; label: string }[] = [
-  { id: 's1', index: '01', label: 'Employee Details' },
-  { id: 's2', index: '02', label: 'Employee Transfer Details' },
-  { id: 's3', index: '03', label: 'Reimbursement Details' },
-  { id: 's4', index: '04', label: 'Transfer Travel Journey Details' },
-  { id: 's5', index: '05', label: 'Documents & Attachments' },
-  { id: 's6', index: '06', label: 'Advanced Details' },
+  { id: 'major',    index: '01', label: 'Major Head'     },
+  { id: 'subMajor', index: '02', label: 'Sub Major Head' },
+  { id: 'minor',    index: '03', label: 'Minor Head'     },
 ];
 
 export default function App() {
-  const [open, setOpen] = useState<Set<SectionId>>(
-    new Set(sectionDefs.map((s) => s.id))
-  );
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [moduleOpen, setModuleOpen] = useState(false);
 
+  /* Section state ─────────────────────────────────────────────── */
+  const [major, setMajor] = useState<MajorHeadState>({ mode: 'create', form: emptyMajorForm });
+  const [subMajor, setSubMajor] = useState<ChildHeadState>({ mode: 'create', form: emptyChildForm });
+  const [minor, setMinor] = useState<ChildHeadState>({ mode: 'create', form: emptyChildForm });
+
+  /* Accordion expansion ───────────────────────────────────────── */
+  const [open, setOpen] = useState<Set<SectionId>>(new Set(['major']));
+
   const toggleSection = (id: SectionId) => {
     setOpen((prev) => {
+      // Keep Major Head open until a valid parent context exists.
+      if (id === 'major' && prev.has('major') && !majorComplete) {
+        return prev;
+      }
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -39,25 +51,41 @@ export default function App() {
     });
   };
 
-  const collapseAll = () => setOpen(new Set());
+  const collapseAll = () => {
+    // Prevent an empty/blocked first view when nothing has been selected yet.
+    if (!majorComplete) {
+      setOpen(new Set(['major']));
+      return;
+    }
+    setOpen(new Set());
+  };
   const expandAll = () => setOpen(new Set(sectionDefs.map((s) => s.id)));
 
-  // Build stepper state: highlight the first open section as "active",
-  // previous ones as "completed".
-  const steps: StepperItem[] = useMemo(() => {
-    const firstOpenIdx = sectionDefs.findIndex((s) => open.has(s.id));
-    return sectionDefs.map((s, i) => {
-      let state: StepperItem['state'] = 'idle';
-      if (firstOpenIdx === -1) {
-        state = 'idle';
-      } else if (i < firstOpenIdx) {
-        state = 'completed';
-      } else if (i === firstOpenIdx) {
-        state = 'active';
-      }
-      return { id: s.id, index: s.index, label: s.label, state };
+  /* Dependency rules ──────────────────────────────────────────── */
+  const majorComplete    = isMajorComplete(major);
+  const subMajorComplete = isChildComplete(subMajor);
+  const subMajorLocked   = !majorComplete;
+  const minorLocked      = !majorComplete || !subMajorComplete;
+
+  /* When Major becomes complete, auto-open Sub Major (only the
+     first time, if it hasn't been opened yet). Same for Minor. */
+  const autoOpen = (id: SectionId) =>
+    setOpen((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
     });
-  }, [open]);
+
+  /* Reset / draft / submit ────────────────────────────────────── */
+  const resetAll = () => {
+    setMajor({ mode: 'create', form: emptyMajorForm });
+    setSubMajor({ mode: 'create', form: emptyChildForm });
+    setMinor({ mode: 'create', form: emptyChildForm });
+    setOpen(new Set(['major']));
+  };
+
+  const canSubmit = majorComplete; // at minimum a Major Head must exist
 
   return (
     <div className="min-h-screen page-bg font-poppins">
@@ -71,56 +99,58 @@ export default function App() {
           onOpenModuleMenu={setModuleOpen}
         />
 
-        <StepperPanel
-          steps={steps}
-          onSelect={(id) => toggleSection(id as SectionId)}
-          expanded={sidebarExpanded}
-        />
-
-        {/* Main content */}
+        {/* ─────────── Main content ─────────── */}
         <main className="flex-1 min-w-0 flex flex-col gap-4">
-          {/*
-           * Outer white card — Figma node 5938:50559
-           *   display:flex · flex-direction:column · align-items:flex-start
-           *   padding:16 · gap:40 · border-radius:24 · background:#FFF
-           */}
           <motion.div
             layout
             className="flex flex-col w-full"
             style={{
-              padding: '16px',
-              gap: '40px',
+              padding: 16,
+              gap: 32,
               alignItems: 'flex-start',
-              borderRadius: '24px',
+              borderRadius: 24,
               background: '#FFF',
             }}
           >
-            {/* Title row — Figma node 5938:50560 */}
-            <div className="flex items-center justify-between gap-6 w-full">
-              <div className="flex flex-col items-start gap-1">
+            {/* ─── Title row + breadcrumb + collapse pills ─── */}
+            <div className="flex items-center justify-between gap-6 w-full flex-wrap">
+              <div className="flex flex-col items-start" style={{ gap: 8 }}>
                 <h1
                   className="font-poppins"
                   style={{
-                    color: '#255AC3',
-                    fontSize: '24px',
-                    fontWeight: 600,
-                    lineHeight: 'normal',
-                    fontStyle: 'normal',
+                    color: '#1565C0',
+                    fontSize: 26,
+                    fontWeight: 700,
+                    lineHeight: 1.1,
+                    letterSpacing: '-0.01em',
                   }}
                 >
-                  Travel Order
+                  Unified Account Head Creation
                 </h1>
-                <div className="flex items-center gap-2">
+                <p
+                  className="font-poppins"
+                  style={{
+                    color: '#5A72A5',
+                    fontSize: 14,
+                    fontWeight: 500,
+                    maxWidth: 720,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  Create or map Major, Sub Major, and Minor Heads in one workflow — partial
+                  hierarchies, full chains, and mixed create+map combinations are all supported.
+                </p>
+                <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
                   <span
                     className="flex items-center justify-center rounded-2xl font-poppins font-medium"
                     style={{
                       background: '#F6F7F8',
                       padding: '4px 8px',
-                      fontSize: '16px',
+                      fontSize: 14,
                       color: '#808080',
                     }}
                   >
-                    HRMS
+                    Budget Module
                   </span>
                   <CaretRight size={20} className="text-grey-400" />
                   <span
@@ -128,115 +158,133 @@ export default function App() {
                     style={{
                       background: '#F6F7F8',
                       padding: '4px 8px',
-                      fontSize: '16px',
+                      fontSize: 14,
                       fontWeight: 600,
-                      color: '#255AC3',
+                      color: '#1565C0',
                     }}
                   >
-                    Reimbursement
+                    Account Head Management
                   </span>
                 </div>
               </div>
 
-              {/* Segmented Collapse / Expand pills — Figma nodes 5938:50571 + 5938:50576 */}
               <div className="flex items-center">
                 <button
+                  type="button"
                   onClick={collapseAll}
                   aria-label="Collapse All"
                   className="flex items-center justify-center font-poppins whitespace-nowrap transition hover:brightness-95"
                   style={{
-                    width: '120px',
+                    width: 120,
                     padding: '4px 8px',
-                    gap: '4px',
+                    gap: 4,
                     border: '1px solid #815E18',
                     background: '#FBF5E9',
                     color: '#815E18',
-                    fontSize: '14px',
+                    fontSize: 14,
                     fontWeight: 500,
-                    lineHeight: 'normal',
-                    borderTopLeftRadius: '16px',
-                    borderBottomLeftRadius: '16px',
+                    borderTopLeftRadius: 16,
+                    borderBottomLeftRadius: 16,
                   }}
                 >
-                  <img
-                    src="/assets/caret-double-up.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="shrink-0"
-                  />
+                  <img src="/assets/caret-double-up.svg" alt="" width={16} height={16} draggable={false} />
                   Collapse All
                 </button>
                 <button
+                  type="button"
                   onClick={expandAll}
                   aria-label="Expand All"
                   className="flex items-center justify-center font-poppins whitespace-nowrap transition hover:brightness-95"
                   style={{
-                    width: '120px',
+                    width: 120,
                     padding: '4px 8px',
-                    gap: '4px',
+                    gap: 4,
                     borderTop: '1px solid #815E18',
                     borderRight: '1px solid #815E18',
                     borderBottom: '1px solid #815E18',
                     background: '#FBF5E9',
                     color: '#815E18',
-                    fontSize: '14px',
+                    fontSize: 14,
                     fontWeight: 500,
-                    lineHeight: 'normal',
-                    borderTopRightRadius: '16px',
-                    borderBottomRightRadius: '16px',
+                    borderTopRightRadius: 16,
+                    borderBottomRightRadius: 16,
                   }}
                 >
-                  <img
-                    src="/assets/caret-double-down.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="shrink-0"
-                  />
+                  <img src="/assets/caret-double-down.svg" alt="" width={16} height={16} draggable={false} />
                   Expand All
                 </button>
               </div>
             </div>
 
-            {/* Sections list — Figma node 6270:43992
-             *   display:flex · flex-direction:column · align-items:flex-start
-             *   gap:24px · align-self:stretch
-             */}
-            <div
-              className="flex flex-col w-full"
-              style={{ alignItems: 'flex-start', gap: '24px' }}
-            >
+            <div className="w-full flex flex-col" style={{ gap: 24 }}>
               {sectionDefs.map((s, i) => {
                 const isOpen = open.has(s.id);
+                const sectionState =
+                  s.id === 'major' ? major : s.id === 'subMajor' ? subMajor : minor;
+                const status = badgeFor(sectionState);
+
+                const locked =
+                  s.id === 'subMajor' ? subMajorLocked :
+                  s.id === 'minor'    ? minorLocked :
+                  false;
+
+                const lockedHint =
+                  s.id === 'subMajor'
+                    ? 'Select or create a Major Head first.'
+                    : s.id === 'minor'
+                      ? majorComplete
+                        ? 'Select or create a Sub Major Head first.'
+                        : 'Select or create the Major + Sub Major Heads first.'
+                      : undefined;
+
+                const subtitle = locked ? null : sectionSubtitle(s.id, sectionState);
+
                 return (
                   <motion.div
                     key={s.id}
+                    id={`section-${s.id}`}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.35 }}
+                    transition={{ delay: i * 0.05, duration: 0.35 }}
                     className="w-full"
                   >
                     <SectionCard
                       index={s.index}
                       title={s.label}
+                      subtitle={subtitle}
                       expanded={isOpen}
+                      locked={locked}
+                      lockedHint={lockedHint}
+                      badge={<HierarchyBadge status={status} />}
                       onToggle={() => toggleSection(s.id)}
                     >
-                      {renderSection(s.id, () => {
-                        const idx = sectionDefs.findIndex((x) => x.id === s.id);
-                        const next = sectionDefs[idx + 1];
-                        if (next) {
-                          setOpen((prev) => {
-                            const n = new Set(prev);
-                            n.delete(s.id);
-                            n.add(next.id);
-                            return n;
-                          });
-                        }
-                      })}
+                      {s.id === 'major' && (
+                        <MajorHeadSection
+                          state={major}
+                          onChange={(next) => {
+                            setMajor(next);
+                            if (isMajorComplete(next)) autoOpen('subMajor');
+                          }}
+                        />
+                      )}
+                      {s.id === 'subMajor' && (
+                        <SubMajorHeadSection
+                          major={major}
+                          state={subMajor}
+                          onChange={(next) => {
+                            setSubMajor(next);
+                            if (isChildComplete(next)) autoOpen('minor');
+                          }}
+                        />
+                      )}
+                      {s.id === 'minor' && (
+                        <MinorHeadSection
+                          major={major}
+                          subMajor={subMajor}
+                          state={minor}
+                          onChange={setMinor}
+                        />
+                      )}
                     </SectionCard>
                   </motion.div>
                 );
@@ -244,110 +292,104 @@ export default function App() {
             </div>
           </motion.div>
 
-          {/* ───────────── Sticky Form action CTAs — Figma node 5830:83284
-              Glass-morphism treatment: translucent white with backdrop blur,
-              gradient hairline border, layered ambient + elevation shadows,
-              inner highlight at the top edge for depth. */}
+          {/* ─────────── Sticky glass footer ─────────── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="glass-cta sticky bottom-5 z-30 box-border flex items-center justify-end self-stretch"
-            style={{
-              padding: '24px 40px',
-              gap: 24,
-            }}
+            className="glass-cta sticky bottom-5 z-30 box-border flex items-center justify-between self-stretch flex-wrap"
+            style={{ padding: '20px 32px', gap: 24 }}
           >
-            {/* Reset — glass outline */}
-            <motion.button
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="glass-btn-reset group box-border inline-flex items-center justify-center shrink-0 relative overflow-hidden"
-              style={{
-                width: 150,
-                height: 48,
-                padding: '10px 24px',
-                gap: 8,
-                borderRadius: 16,
-              }}
-            >
-              <span className="glass-btn-sheen" aria-hidden />
-              <img
-                src="/assets/icon-clockclockwise.svg"
-                alt=""
-                className="relative z-[1] transition-transform duration-300 group-hover:-rotate-[30deg]"
-                style={{ width: 20, height: 20 }}
-              />
+            <div className="flex items-center gap-3">
               <span
-                className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
-                style={{ fontSize: 16, color: '#255AC3', lineHeight: 'normal', letterSpacing: '0.01em' }}
+                className="font-poppins"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.18em',
+                  color: '#5A72A5',
+                  textTransform: 'uppercase',
+                }}
               >
-                Reset
+                Workflow Status
               </span>
-            </motion.button>
+              <span
+                className="font-poppins"
+                style={{ fontSize: 14, fontWeight: 600, color: '#142952' }}
+              >
+                {workflowStatusText(major, subMajor, minor)}
+              </span>
+            </div>
 
-            {/* Save — mint gradient + soft glow */}
-            <motion.button
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="glass-btn-save group box-border inline-flex items-center justify-center shrink-0 relative overflow-hidden"
-              style={{
-                width: 150,
-                height: 48,
-                padding: '10px 24px',
-                gap: 8,
-                borderRadius: 16,
-              }}
-            >
-              <span className="glass-btn-sheen" aria-hidden />
-              <img
-                src="/assets/icon-floppydisk.svg"
-                alt=""
-                className="relative z-[1] transition-transform duration-300 group-hover:scale-110"
-                style={{ width: 32, height: 32 }}
-              />
-              <span
-                className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
-                style={{ fontSize: 16, color: '#0E4913', lineHeight: 'normal', letterSpacing: '0.01em' }}
+            <div className="flex items-center" style={{ gap: 16 }}>
+              {/* Reset */}
+              <motion.button
+                type="button"
+                onClick={resetAll}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="glass-btn-reset group box-border inline-flex items-center justify-center shrink-0 relative overflow-hidden"
+                style={{ height: 48, padding: '10px 22px', gap: 8, borderRadius: 16 }}
               >
-                Save
-              </span>
-            </motion.button>
+                <span className="glass-btn-sheen" aria-hidden />
+                <ResetGlyph />
+                <span
+                  className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
+                  style={{ fontSize: 15, color: '#255AC3', letterSpacing: '0.01em' }}
+                >
+                  Reset
+                </span>
+              </motion.button>
 
-            {/* Forward — primary gradient with halo */}
-            <motion.button
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="glass-btn-forward group box-border inline-flex items-center justify-end shrink-0 relative overflow-hidden"
-              style={{
-                width: 150,
-                height: 48,
-                padding: '10px 24px',
-                gap: 8,
-                borderRadius: 16,
-              }}
-            >
-              <span className="glass-btn-sheen" aria-hidden />
-              <span
-                className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
-                style={{ fontSize: 16, color: '#FFFFFF', lineHeight: 'normal', letterSpacing: '0.01em' }}
+              {/* Save Draft */}
+              <motion.button
+                type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="glass-btn-save group box-border inline-flex items-center justify-center shrink-0 relative overflow-hidden"
+                style={{ height: 48, padding: '10px 22px', gap: 10, borderRadius: 16 }}
               >
-                Forward
-              </span>
-              <img
-                src="/assets/icon-caret-forward.svg"
-                alt=""
-                className="relative z-[1] transition-transform duration-300 group-hover:translate-x-1"
-                style={{ width: 20, height: 20 }}
-              />
-            </motion.button>
+                <span className="glass-btn-sheen" aria-hidden />
+                <SaveGlyph />
+                <span
+                  className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
+                  style={{ fontSize: 15, color: '#0E4913', letterSpacing: '0.01em' }}
+                >
+                  Save Draft
+                </span>
+              </motion.button>
+
+              {/* Submit Hierarchy */}
+              <motion.button
+                type="button"
+                disabled={!canSubmit}
+                whileHover={canSubmit ? { y: -2 } : undefined}
+                whileTap={canSubmit ? { scale: 0.97 } : undefined}
+                className="glass-btn-forward group box-border inline-flex items-center justify-center shrink-0 relative overflow-hidden"
+                style={{
+                  height: 48,
+                  padding: '10px 24px',
+                  gap: 8,
+                  borderRadius: 16,
+                  opacity: canSubmit ? 1 : 0.55,
+                  cursor: canSubmit ? 'pointer' : 'not-allowed',
+                }}
+              >
+                <span className="glass-btn-sheen" aria-hidden />
+                <span
+                  className="relative z-[1] font-poppins font-semibold whitespace-nowrap"
+                  style={{ fontSize: 15, color: '#FFFFFF', letterSpacing: '0.01em' }}
+                >
+                  Submit Hierarchy
+                </span>
+                <SubmitGlyph />
+              </motion.button>
+            </div>
           </motion.div>
         </main>
       </div>
 
-      {/* Click-catcher to dismiss the module overlay. Kept BELOW the
-          sidebar (z-20 < sidebar's z-30) so it never intercepts clicks
-          on the popup tiles — those clicks reach the ModuleGrid first. */}
+      {/* Click-catcher to dismiss the module overlay */}
       <AnimatePresence>
         {moduleOpen && (
           <motion.div
@@ -364,13 +406,103 @@ export default function App() {
   );
 }
 
-function renderSection(id: SectionId, onNext: () => void) {
-  switch (id) {
-    case 's1': return <EmployeeDetailsContent onNext={onNext} />;
-    case 's2': return <EmployeeTransferDetailsContent onNext={onNext} />;
-    case 's3': return <ReimbursementDetailsContent onNext={onNext} />;
-    case 's4': return <TransferTravelJourneyContent onNext={onNext} />;
-    case 's5': return <DocumentsAttachmentsContent onNext={onNext} />;
-    case 's6': return <AdvancedDetailsContent />;
+/* ──────────────────────────────────────────────────────────────────
+ *  Helpers — section subtitle + footer status copy
+ *  ────────────────────────────────────────────────────────────────── */
+
+function sectionSubtitle(id: SectionId, state: MajorHeadState | ChildHeadState): string | null {
+  if (state.mode === 'use') {
+    if (!state.selectedId) return 'Use Existing — no selection yet';
+    return 'Use Existing — record will be mapped';
   }
+  const head =
+    id === 'major'
+      ? '4-digit Major Head'
+      : id === 'subMajor'
+        ? '2-digit Sub Major Head'
+        : '3-digit Minor Head';
+  return `Create New — drafting ${head}`;
+}
+
+function workflowStatusText(
+  major: MajorHeadState,
+  subMajor: ChildHeadState,
+  minor: ChildHeadState
+): string {
+  const parts: string[] = [];
+  const m = badgeFor(major);
+  const s = badgeFor(subMajor);
+  const n = badgeFor(minor);
+  if (m) parts.push(`Major ${m.toLowerCase()}`);
+  if (s) parts.push(`Sub Major ${s.toLowerCase()}`);
+  if (n) parts.push(`Minor ${n.toLowerCase()}`);
+  if (parts.length === 0) return 'Begin by selecting or creating a Major Head.';
+  return parts.join(' · ');
+}
+
+/* ──────────────────────────────────────────────────────────────────
+ *  Inline glyphs
+ *  ────────────────────────────────────────────────────────────────── */
+
+function ResetGlyph() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="relative z-[1] transition-transform duration-300 group-hover:-rotate-[30deg]"
+      aria-hidden
+    >
+      <path
+        d="M4 12a8 8 0 0114.5-4.6M20 12a8 8 0 01-14.5 4.6M4 4v4h4M20 20v-4h-4"
+        stroke="#255AC3"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function SaveGlyph() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="relative z-[1] transition-transform duration-300 group-hover:scale-110"
+      aria-hidden
+    >
+      <path
+        d="M5 4h11l3 3v13a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"
+        stroke="#0E4913"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7 4v5h9V4M8 14h8M8 17h6"
+        stroke="#0E4913"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function SubmitGlyph() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="relative z-[1] transition-transform duration-300 group-hover:translate-x-1"
+      aria-hidden
+    >
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
