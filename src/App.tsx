@@ -89,7 +89,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen page-bg font-poppins">
-      <Header />
+      <Header
+        stepperLayout={stepperLayout}
+        onChangeStepperLayout={setStepperLayout}
+      />
 
       <div className="mx-auto w-full max-w-[1920px] flex gap-5 px-6 pb-14 pt-10 xl:gap-6 xl:px-8 2xl:px-10">
         <IconSidebar
@@ -99,8 +102,19 @@ export default function App() {
           onOpenModuleMenu={setModuleOpen}
         />
 
-        {/* ─────────── Main content ─────────── */}
+        <StepperPanel
+          steps={steps}
+          onSelect={(id) => toggleSection(id as SectionId)}
+          expanded={sidebarExpanded}
+        />
+
+        {/* Main content */}
         <main className="flex-1 min-w-0 flex flex-col gap-4">
+          {/*
+           * Outer white card — Figma node 5938:50559
+           *   display:flex · flex-direction:column · align-items:flex-start
+           *   padding:16 · gap:40 · border-radius:24 · background:#FFF
+           */}
           <motion.div
             layout
             className="flex flex-col w-full"

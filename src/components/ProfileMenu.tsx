@@ -1,7 +1,17 @@
 import { motion } from 'framer-motion';
 
+type ProfileMenuProps = {
+  onClose?: () => void;
+  stepperLayout?: 'side' | 'top';
+  onChangeStepperLayout?: (layout: 'side' | 'top') => void;
+};
+
 // Matches Figma node 5938-44345 — user profile/role dropdown
-export function ProfileMenu({ onClose }: { onClose?: () => void }) {
+export function ProfileMenu({
+  onClose,
+  stepperLayout = 'side',
+  onChangeStepperLayout,
+}: ProfileMenuProps) {
   void onClose;
   return (
     <div
@@ -25,6 +35,45 @@ export function ProfileMenu({ onClose }: { onClose?: () => void }) {
         <span className="font-semibold text-grey-800">Last Login:</span>
         <span className="text-grey-700">19 Jan, 2026</span>
         <span className="text-brand-500 font-semibold">09:59:01</span>
+      </div>
+
+      <div className="mt-5">
+        <div className="text-[14px] font-semibold text-grey-900 mb-3">Stepper Position</div>
+        <div
+          className="relative flex items-center rounded-[12px] border border-brand-200 overflow-hidden bg-white/70"
+          role="tablist"
+          aria-label="Stepper position"
+        >
+          {(['side', 'top'] as const).map((pos) => {
+            const active = stepperLayout === pos;
+            const label = pos === 'side' ? 'Left Side' : 'Top';
+            return (
+              <motion.button
+                key={pos}
+                onClick={() => onChangeStepperLayout?.(pos)}
+                whileTap={{ scale: 0.97 }}
+                role="tab"
+                aria-selected={active}
+                className="relative flex-1 h-9 flex items-center justify-center font-poppins font-medium text-[13px] focus:outline-none"
+              >
+                {active && (
+                  <motion.span
+                    layoutId="stepper-pos-pill"
+                    className="absolute inset-0 rounded-[10px] bg-brand-500"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                  />
+                )}
+                <motion.span
+                  animate={{ color: active ? '#FFFFFF' : '#142952' }}
+                  transition={{ duration: 0.2 }}
+                  className="relative z-10 leading-none"
+                >
+                  {label}
+                </motion.span>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="mt-5">

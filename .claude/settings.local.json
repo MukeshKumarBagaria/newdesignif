@@ -5,7 +5,9 @@
       "mcp__plugin_marketing_figma__get_design_context",
       "mcp__Figma__get_design_context",
       "mcp__Figma__get_screenshot",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
