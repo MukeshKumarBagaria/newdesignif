@@ -17,6 +17,7 @@ import { HierarchyBadge } from './components/account-head/primitives';
 import { MajorHeadSection } from './components/account-head/MajorHeadSection';
 import { SubMajorHeadSection } from './components/account-head/SubMajorHeadSection';
 import { MinorHeadSection } from './components/account-head/MinorHeadSection';
+import { ObjectDetailHeadScreen } from './components/account-head/ObjectDetailHeadScreen';
 
 type SectionId = 'major' | 'subMajor' | 'minor';
 
@@ -29,6 +30,7 @@ const sectionDefs: { id: SectionId; index: string; label: string }[] = [
 export default function App() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [moduleOpen, setModuleOpen] = useState(false);
+  const [activeMenuKey, setActiveMenuKey] = useState('Dashboard');
 
   /* Section state ─────────────────────────────────────────────── */
   const [major, setMajor] = useState<MajorHeadState>({ mode: 'create', form: emptyMajorForm });
@@ -89,10 +91,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen page-bg font-poppins">
-      <Header
-        stepperLayout={stepperLayout}
-        onChangeStepperLayout={setStepperLayout}
-      />
+      <Header />
 
       <div className="mx-auto w-full max-w-[1920px] flex gap-5 px-6 pb-14 pt-10 xl:gap-6 xl:px-8 2xl:px-10">
         <IconSidebar
@@ -100,15 +99,14 @@ export default function App() {
           onToggle={() => setSidebarExpanded((v) => !v)}
           moduleMenuOpen={moduleOpen}
           onOpenModuleMenu={setModuleOpen}
-        />
-
-        <StepperPanel
-          steps={steps}
-          onSelect={(id) => toggleSection(id as SectionId)}
-          expanded={sidebarExpanded}
+          activeMenuKey={activeMenuKey}
+          onMenuChange={setActiveMenuKey}
         />
 
         {/* Main content */}
+        {activeMenuKey === 'Object + Detail Head' ? (
+          <ObjectDetailHeadScreen />
+        ) : (
         <main className="flex-1 min-w-0 flex flex-col gap-4">
           {/*
            * Outer white card — Figma node 5938:50559
@@ -401,6 +399,7 @@ export default function App() {
             </div>
           </motion.div>
         </main>
+        )}
       </div>
 
       {/* Click-catcher to dismiss the module overlay */}

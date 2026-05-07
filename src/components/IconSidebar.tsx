@@ -7,6 +7,8 @@ type Props = {
   onToggle: () => void;
   moduleMenuOpen: boolean;
   onOpenModuleMenu: (v: boolean) => void;
+  activeMenuKey?: string;
+  onMenuChange?: (key: string) => void;
 };
 
 const defaultModule: ModuleTile = {
@@ -26,14 +28,28 @@ type SubItem = {
 
 const subItems: SubItem[] = [
   { label: 'Dashboard',        icon: '/assets/icon-squares.svg',      active: true },
+  { label: 'Object + Detail Head', icon: '/assets/icon-cashregister.svg' },
   { label: 'Reimbursement',    icon: '/assets/icon-handcoins.svg' },
   { label: 'Leave Encashment', icon: '/assets/icon-cashregister.svg' },
   { label: 'E-profile',        icon: '/assets/icon-usercheck.svg' },
 ];
 
-export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMenu }: Props) {
+export function IconSidebar({
+  expanded,
+  onToggle,
+  moduleMenuOpen,
+  onOpenModuleMenu,
+  activeMenuKey,
+  onMenuChange,
+}: Props) {
   const [activeKey, setActiveKey] = useState<string>('Dashboard');
   const [selectedModule, setSelectedModule] = useState<ModuleTile>(defaultModule);
+  const currentActiveKey = activeMenuKey ?? activeKey;
+
+  const setMenu = (key: string) => {
+    setActiveKey(key);
+    onMenuChange?.(key);
+  };
 
   const handleModuleSelect = (tile: ModuleTile) => {
     setSelectedModule(tile);
@@ -268,7 +284,7 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
               style={{ gap: 18 }}
             >
               {subItems.map((item) => {
-                const isActive = activeKey === item.label;
+                const isActive = currentActiveKey === item.label;
                 // Reimbursement uses grey-50; Leave Encashment & E-profile use white.
                 const isReimbursement = item.label === 'Reimbursement';
                 const bg = isActive
@@ -283,7 +299,7 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
                     key={item.label}
                     whileHover={{ x: -1 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setActiveKey(item.label)}
+                    onClick={() => setMenu(item.label)}
                     className="border border-solid flex items-center transition-colors"
                     style={{
                       width: 200,
@@ -348,11 +364,11 @@ export function IconSidebar({ expanded, onToggle, moduleMenuOpen, onOpenModuleMe
             <img src={selectedModule.icon} alt={selectedModule.label} className="w-6 h-6" />
           </button>
           {subItems.map((item) => {
-            const isActive = activeKey === item.label;
+            const isActive = currentActiveKey === item.label;
             return (
               <button
                 key={item.label}
-                onClick={() => setActiveKey(item.label)}
+                onClick={() => setMenu(item.label)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition ${
                   isActive ? 'bg-[#255AC3]' : 'hover:bg-grey-25'
                 }`}

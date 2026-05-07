@@ -9,7 +9,6 @@ import {
 import {
   LabeledField,
   SearchableDropdown,
-  StatusSwitch,
   TextArea,
   TextField,
   type DropdownItem,
@@ -83,7 +82,6 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
                 code: '',
                 englishName: '',
                 hindiName: '',
-                active: true,
                 remarks: '',
               },
       });
@@ -164,13 +162,6 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
                   value={state.form.hindiName}
                   onChange={(v) => updateForm('hindiName', v)}
                   placeholder="e.g. प्रारंभिक शिक्षा"
-                />
-              </LabeledField>
-
-              <LabeledField label="Active Status">
-                <StatusSwitch
-                  active={state.form.active}
-                  onChange={(v) => updateForm('active', v)}
                 />
               </LabeledField>
 

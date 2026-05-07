@@ -11,7 +11,6 @@ import {
   ModeToggle,
   SearchableDropdown,
   SelectField,
-  StatusSwitch,
   TextArea,
   TextField,
   type DropdownItem,
@@ -74,7 +73,6 @@ export function MajorHeadSection({ state, onChange }: Props) {
             hindiName: '',
             sector: '',
             subSector: '',
-            active: true,
             remarks: '',
           },
     });
@@ -172,13 +170,6 @@ export function MajorHeadSection({ state, onChange }: Props) {
                   onChange={(v) => updateForm('subSector', v)}
                   placeholder={state.form.sector ? 'Select sub-sector' : 'Sector first'}
                   disabled={!state.form.sector}
-                />
-              </LabeledField>
-
-              <LabeledField label="Active Status">
-                <StatusSwitch
-                  active={state.form.active}
-                  onChange={(v) => updateForm('active', v)}
                 />
               </LabeledField>
 

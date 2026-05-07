@@ -111,7 +111,6 @@ export type MajorHeadForm = {
   hindiName: string;
   sector: string;
   subSector: string;
-  active: boolean;
   remarks: string;
 };
 
@@ -119,7 +118,6 @@ export type ChildHeadForm = {
   code: string;
   englishName: string;
   hindiName: string;
-  active: boolean;
   remarks: string;
 };
 
@@ -129,7 +127,6 @@ export const emptyMajorForm: MajorHeadForm = {
   hindiName: '',
   sector: '',
   subSector: '',
-  active: true,
   remarks: '',
 };
 
@@ -137,7 +134,6 @@ export const emptyChildForm: ChildHeadForm = {
   code: '',
   englishName: '',
   hindiName: '',
-  active: true,
   remarks: '',
 };
 

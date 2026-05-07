@@ -287,7 +287,6 @@ Color Palette:
 The screen should feel like:
 
 “Build hierarchy dynamically in one flow”
-
 instead of:
 
 “Fill multiple disconnected forms.”
