@@ -1,7 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
-  MAJOR_HEADS,
   MINOR_HEADS,
   SUB_MAJOR_HEADS,
   type ChildHeadState,
@@ -9,12 +7,10 @@ import {
 } from './data';
 import {
   LabeledField,
-  SearchableDropdown,
   TextArea,
   TextField,
-  type DropdownItem,
 } from './primitives';
-import { FormGrid, ModeRow, UseExistingPanel } from './MajorHeadSection';
+import { FormGrid } from './MajorHeadSection';
 import { ParentBanner, parentSummaryText } from './SubMajorHeadSection';
 
 type Props = {
@@ -37,23 +33,6 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
   const parentSubMajorId =
     subMajor.mode === 'use' ? subMajor.selectedId : null;
 
-  const items: DropdownItem[] = useMemo(() => {
-    let pool = MINOR_HEADS;
-    if (parentMajorId) pool = pool.filter((mn) => mn.parentMajorId === parentMajorId);
-    if (parentSubMajorId)
-      pool = pool.filter((mn) => mn.parentSubMajorId === parentSubMajorId);
-    return pool.map((mn) => {
-      const m = MAJOR_HEADS.find((mh) => mh.id === mn.parentMajorId);
-      const sm = SUB_MAJOR_HEADS.find((s) => s.id === mn.parentSubMajorId);
-      return {
-        id: mn.id,
-        code: mn.code,
-        label: mn.name,
-        caption: m && sm ? `Under ${m.code} · ${sm.code}` : undefined,
-      };
-    });
-  }, [parentMajorId, parentSubMajorId]);
-
   const codeError =
     state.mode === 'create' && state.form.code && !/^\d{3}$/.test(state.form.code)
       ? 'Code must be exactly 3 digits.'
@@ -73,23 +52,6 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
       ? 'A Minor Head with this code already exists under the selected Sub Major.'
       : null;
 
-  const setMode = (mode: 'create' | 'use') => {
-    if (mode === 'use') onChange({ mode: 'use', selectedId: null });
-    else
-      onChange({
-        mode: 'create',
-        form:
-          state.mode === 'create'
-            ? state.form
-            : {
-                code: '',
-                englishName: '',
-                hindiName: '',
-                remarks: '',
-              },
-      });
-  };
-
   const updateForm = <K extends keyof (ChildHeadState & { mode: 'create' })['form']>(
     key: K,
     value: (ChildHeadState & { mode: 'create' })['form'][K]
@@ -100,6 +62,19 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
 
   const subParentSummary = subMajorSummaryText(subMajor);
 
+  if (state.mode !== 'create') {
+    onChange({
+      mode: 'create',
+      form: {
+        code: '',
+        englishName: '',
+        hindiName: '',
+        remarks: '',
+      },
+    });
+    return null;
+  }
+
   return (
     <div className="flex flex-col w-full" style={{ gap: 24 }}>
       <div className="flex flex-col w-full" style={{ gap: 8 }}>
@@ -107,83 +82,52 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
         <ParentBanner label="Parent Sub Major Head" value={subParentSummary} />
       </div>
 
-      <ModeRow
-        mode={state.mode}
-        onChange={setMode}
-        layoutId="minor-mode-pill"
-        labels={['Create New Minor Head', 'Use Existing Minor Head']}
-      />
-
-      <AnimatePresence mode="wait" initial={false}>
-        {state.mode === 'use' ? (
-          <motion.div key="use" {...swap}>
-            <UseExistingPanel
-              title="Map an existing Minor Head"
-              description={
-                parentSubMajorId
-                  ? 'Filtered by the selected Major + Sub Major above.'
-                  : 'You can browse all Minor Heads — choose a Sub Major Head above to filter.'
-              }
-              dropdown={
-                <SearchableDropdown
-                  ariaLabel="Select Minor Head"
-                  items={items}
-                  selectedId={state.selectedId}
-                  onSelect={(id) => onChange({ mode: 'use', selectedId: id })}
-                  placeholder="Select Minor Head"
-                />
-              }
+      <motion.div key="create" {...swap}>
+        <FormGrid>
+          <LabeledField
+            label="Minor Head Code"
+            required
+            hint="3-digit numeric code (e.g. 102)."
+            error={codeError ?? dupError}
+          >
+            <TextField
+              value={state.form.code}
+              onChange={(v) => updateForm('code', v.replace(/\D/g, '').slice(0, 3))}
+              placeholder="000"
+              maxLength={3}
+              inputMode="numeric"
+              prefix="#"
+              tone={codeError || dupError ? 'error' : 'default'}
             />
-          </motion.div>
-        ) : (
-          <motion.div key="create" {...swap}>
-            <FormGrid>
-              <LabeledField
-                label="Minor Head Code"
-                required
-                hint="3-digit numeric code (e.g. 102)."
-                error={codeError ?? dupError}
-              >
-                <TextField
-                  value={state.form.code}
-                  onChange={(v) => updateForm('code', v.replace(/\D/g, '').slice(0, 3))}
-                  placeholder="000"
-                  maxLength={3}
-                  inputMode="numeric"
-                  prefix="#"
-                  tone={codeError || dupError ? 'error' : 'default'}
-                />
-              </LabeledField>
+          </LabeledField>
 
-              <LabeledField label="English Nomenclature" required>
-                <TextField
-                  value={state.form.englishName}
-                  onChange={(v) => updateForm('englishName', v)}
-                  placeholder="e.g. Government Schools"
-                />
-              </LabeledField>
+          <LabeledField label="English Nomenclature" required>
+            <TextField
+              value={state.form.englishName}
+              onChange={(v) => updateForm('englishName', v)}
+              placeholder="e.g. Government Schools"
+            />
+          </LabeledField>
 
-              <LabeledField label="Hindi Nomenclature">
-                <TextField
-                  value={state.form.hindiName}
-                  onChange={(v) => updateForm('hindiName', v)}
-                  placeholder="e.g. राजकीय विद्यालय"
-                />
-              </LabeledField>
+          <LabeledField label="Hindi Nomenclature">
+            <TextField
+              value={state.form.hindiName}
+              onChange={(v) => updateForm('hindiName', v)}
+              placeholder="e.g. राजकीय विद्यालय"
+            />
+          </LabeledField>
 
-              <LabeledField label="Remarks" className="col-span-full">
-                <TextArea
-                  value={state.form.remarks}
-                  onChange={(v) => updateForm('remarks', v)}
-                  placeholder="Optional notes for audit / approval reviewers"
-                  rows={3}
-                  maxLength={500}
-                />
-              </LabeledField>
-            </FormGrid>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <LabeledField label="Remarks" className="col-span-full">
+            <TextArea
+              value={state.form.remarks}
+              onChange={(v) => updateForm('remarks', v)}
+              placeholder="Optional notes for audit / approval reviewers"
+              rows={3}
+              maxLength={500}
+            />
+          </LabeledField>
+        </FormGrid>
+      </motion.div>
     </div>
   );
 }

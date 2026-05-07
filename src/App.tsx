@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Header } from './components/Header';
 import { IconSidebar } from './components/IconSidebar';
 import { SectionCard } from './components/SectionCard';
@@ -20,6 +20,7 @@ import { MinorHeadSection } from './components/account-head/MinorHeadSection';
 import { ObjectDetailHeadScreen } from './components/account-head/ObjectDetailHeadScreen';
 
 type SectionId = 'major' | 'subMajor' | 'minor';
+type CreationTarget = 'major' | 'subMajor' | 'minor';
 
 const sectionDefs: { id: SectionId; index: string; label: string }[] = [
   { id: 'major',    index: '01', label: 'Major Head'     },
@@ -31,6 +32,7 @@ export default function App() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [moduleOpen, setModuleOpen] = useState(false);
   const [activeMenuKey, setActiveMenuKey] = useState('Dashboard');
+  const [creationTarget, setCreationTarget] = useState<CreationTarget>('minor');
 
   /* Section state ─────────────────────────────────────────────── */
   const [major, setMajor] = useState<MajorHeadState>({ mode: 'create', form: emptyMajorForm });
@@ -61,7 +63,11 @@ export default function App() {
     }
     setOpen(new Set());
   };
-  const expandAll = () => setOpen(new Set(sectionDefs.map((s) => s.id)));
+  const visibleSections = useMemo(() => {
+    if (creationTarget === 'major') return sectionDefs.filter((s) => s.id === 'major');
+    if (creationTarget === 'subMajor') return sectionDefs.filter((s) => s.id !== 'minor');
+    return sectionDefs;
+  }, [creationTarget]);
 
   /* Dependency rules ──────────────────────────────────────────── */
   const majorComplete    = isMajorComplete(major);
@@ -149,9 +155,57 @@ export default function App() {
                     lineHeight: 1.4,
                   }}
                 >
-                  Create or map Major, Sub Major, and Minor Heads in one workflow — partial
-                  hierarchies, full chains, and mixed create+map combinations are all supported.
+                  Create Major, Sub Major, and Minor Heads in one workflow. Use the options below
+                  to choose how deep you want to go in this run.
                 </p>
+                <div className="flex flex-wrap items-center gap-3" style={{ marginTop: 6 }}>
+                  {[
+                    { id: 'major', label: 'Create Major Only' },
+                    { id: 'subMajor', label: 'Create Major + Sub Major' },
+                    { id: 'minor', label: 'Create Major + Sub Major + Minor' },
+                  ].map((item) => {
+                    const selected = creationTarget === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        role="checkbox"
+                        aria-checked={selected}
+                        onClick={() => {
+                          setCreationTarget(item.id as CreationTarget);
+                          setOpen(new Set(['major']));
+                        }}
+                        className="inline-flex items-center gap-2 rounded-full font-poppins transition-all hover:brightness-95"
+                        style={{
+                          height: 34,
+                          padding: '0 12px',
+                          border: `1px solid ${selected ? '#255AC3' : '#BED0F4'}`,
+                          background: selected ? '#E5F4FF' : '#F6F7F8',
+                          color: selected ? '#1B4AA8' : '#5A72A5',
+                          fontSize: 12,
+                          fontWeight: 600,
+                        }}
+                      >
+                        <span
+                          aria-hidden
+                          className="inline-flex items-center justify-center rounded-full"
+                          style={{
+                            width: 16,
+                            height: 16,
+                            border: `1.5px solid ${selected ? '#255AC3' : '#9DB3DC'}`,
+                            background: selected ? '#255AC3' : '#FFFFFF',
+                            color: '#FFFFFF',
+                            fontSize: 10,
+                            lineHeight: 1,
+                          }}
+                        >
+                          {selected ? '✓' : ''}
+                        </span>
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
                 <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
                   <span
                     className="flex items-center justify-center rounded-2xl font-poppins font-medium"
@@ -204,7 +258,7 @@ export default function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={expandAll}
+                  onClick={() => setOpen(new Set(visibleSections.map((s) => s.id)))}
                   aria-label="Expand All"
                   className="flex items-center justify-center font-poppins whitespace-nowrap transition hover:brightness-95"
                   style={{
@@ -229,7 +283,7 @@ export default function App() {
             </div>
 
             <div className="w-full flex flex-col" style={{ gap: 24 }}>
-              {sectionDefs.map((s, i) => {
+              {visibleSections.map((s, i) => {
                 const isOpen = open.has(s.id);
                 const sectionState =
                   s.id === 'major' ? major : s.id === 'subMajor' ? subMajor : minor;
