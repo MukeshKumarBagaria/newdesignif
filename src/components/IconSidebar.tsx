@@ -29,6 +29,7 @@ type SubItem = {
 const subItems: SubItem[] = [
   { label: 'Dashboard',        icon: '/assets/icon-squares.svg',      active: true },
   { label: 'Object + Detail Head', icon: '/assets/icon-cashregister.svg' },
+  { label: 'Scheme Creation',  icon: '/assets/icon-handcoins.svg' },
   { label: 'Reimbursement',    icon: '/assets/icon-handcoins.svg' },
   { label: 'Leave Encashment', icon: '/assets/icon-cashregister.svg' },
   { label: 'E-profile',        icon: '/assets/icon-usercheck.svg' },
@@ -181,21 +182,22 @@ export function IconSidebar({
       {expanded ? (
         <div
           className="relative rounded-[24px] bg-white border border-[#BED0F4] overflow-hidden"
-          style={{ width: 279, height: 363 }}
+          style={{ width: 279, height: 480 }}
         >
           {/* Tree connector — drawn first so pill backgrounds cover the overlapping portions */}
           <svg
             aria-hidden
             className="absolute left-0 top-0 pointer-events-none"
             width="279"
-            height="363"
+            height="480"
           >
-            <line x1="15.5" y1="70" x2="15.5" y2="326" stroke="#D9D9D9" strokeWidth="1" />
+            <line x1="15.5" y1="70" x2="15.5" y2="384" stroke="#D9D9D9" strokeWidth="1" />
             <line x1="15" y1="70.5" x2="89" y2="70.5" stroke="#D9D9D9" strokeWidth="1" />
             <line x1="15" y1="152.5" x2="111" y2="152.5" stroke="#D9D9D9" strokeWidth="1" />
             <line x1="15" y1="210.5" x2="111" y2="210.5" stroke="#D9D9D9" strokeWidth="1" />
             <line x1="15" y1="268.5" x2="111" y2="268.5" stroke="#D9D9D9" strokeWidth="1" />
             <line x1="15" y1="326.5" x2="111" y2="326.5" stroke="#D9D9D9" strokeWidth="1" />
+            <line x1="15" y1="384.5" x2="111" y2="384.5" stroke="#D9D9D9" strokeWidth="1" />
           </svg>
 
           {/* Selection Bar — 247px centered at top 15 */}

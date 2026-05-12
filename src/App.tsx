@@ -18,6 +18,7 @@ import { MajorHeadSection } from './components/account-head/MajorHeadSection';
 import { SubMajorHeadSection } from './components/account-head/SubMajorHeadSection';
 import { MinorHeadSection } from './components/account-head/MinorHeadSection';
 import { ObjectDetailHeadScreen } from './components/account-head/ObjectDetailHeadScreen';
+import { SchemeCreationScreen } from './components/account-head/SchemeCreationScreen';
 
 type SectionId = 'major' | 'subMajor' | 'minor';
 type CreationTarget = 'major' | 'subMajor' | 'minor';
@@ -112,6 +113,8 @@ export default function App() {
         {/* Main content */}
         {activeMenuKey === 'Object + Detail Head' ? (
           <ObjectDetailHeadScreen />
+        ) : activeMenuKey === 'Scheme Creation' ? (
+          <SchemeCreationScreen />
         ) : (
         <main className="flex-1 min-w-0 flex flex-col gap-4">
           {/*
