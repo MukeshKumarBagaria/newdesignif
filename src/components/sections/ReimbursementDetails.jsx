@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { IconCheck } from '../icons';
 import { NextButton } from '../form';
 
-type Props = { onNext: () => void };
-
 const options = [
   { value: 'self', label: 'Self' },
   { value: 'family', label: 'Family' },
@@ -18,23 +16,8 @@ const initialFamily = [
 
 /**
  * ReimbursementDetailsContent — Figma node 5938:50831.
- *
- * Locked spec:
- *   Group gap   : 32px (matches SectionCard body)
- *   Member card : 150×80 · padding 12 · radius 16 · gap 24 between cards
- *                 inactive bg #E9EFFB, border 1px #BED0F4, text #5A72A5
- *                 active   bg #255AC3, border 1px #FFFFFF, text #FFFFFF,
- *                          shadow 0 1 2 rgba(20,49,107,0.5), white 24px circle
- *                          with #255AC3 check
- *   Banner      : bg #FCF4E8, border-l 2px #D18317, padding 10/20,
- *                 Poppins SemiBold 16 / #8A570F
- *   Table       : radius 16, 1.5px #BED0F4 borders
- *                 header row 60px · bg #F2F6FD · Poppins SemiBold 14 / #142952
- *                 body row   60px · bg #FFFFFF · Poppins Medium 14 / #2D3953
- *                 Action column: 115px, 24×24 checkbox, radius 4,
- *                                1.5px #255AC3 border, fill #255AC3 when checked
  */
-export function ReimbursementDetailsContent({ onNext }: Props) {
+export function ReimbursementDetailsContent({ onNext }) {
   const [selected, setSelected] = useState('family');
   const [checks, setChecks] = useState(initialFamily.map((f) => f.checked));
 

@@ -1,60 +1,43 @@
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ChangeEventHandler, CSSProperties, DragEventHandler, ReactNode } from 'react';
 import { EditableField, EditableLabel, NextButton } from '../form';
 import { IconFilePlus } from '../icons';
-
-type Props = { onNext: () => void };
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 const MAX_FILES = 20;
 const ACCEPT = 'image/jpeg,image/png,application/pdf';
 const UPLOAD_MS = 2200;
 
-function isAcceptedFile(file: File) {
+function isAcceptedFile(file) {
   if (ACCEPT.split(',').some((m) => file.type === m.trim())) return true;
   return /\.(jpe?g|png|pdf)$/i.test(file.name);
 }
-
-type Attachment = {
-  id: string;
-  name: string;
-  size: number;
-  isPdf: boolean;
-  objectUrl: string;
-  status: 'uploading' | 'complete';
-  progress: number;
-};
 
 /**
  * Section 02 — Employee Transfer Details
  *  Header  : Figma node 5938:50707
  *  Body    : Figma node 5938:50717
- *
- * Attachments: multiple files (browse with multi-select or repeated add, drag
- * multiple) — each file uploads in parallel; list shows uploading and completed
- * rows in add order.
  */
-export function EmployeeTransferDetailsContent({ onNext }: Props) {
+export function EmployeeTransferDetailsContent({ onNext }) {
   const [transferFrom, setTransferFrom] = useState('Old Office');
   const [transferTo, setTransferTo] = useState('New Office');
   const [relievingDate, setRelievingDate] = useState('');
   const [typeOfTransfer, setTypeOfTransfer] = useState('Inter/Intra district');
   const [orderNo, setOrderNo] = useState('Order No');
 
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [attachments, setAttachments] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const rafByIdRef = useRef<Map<string, number>>(new Map());
-  const activeUploadById = useRef<Set<string>>(new Set());
-  const attachmentsRef = useRef<Attachment[]>([]);
+  const fileInputRef = useRef(null);
+  const rafByIdRef = useRef(new Map());
+  const activeUploadById = useRef(new Set());
+  const attachmentsRef = useRef([]);
   attachmentsRef.current = attachments;
 
-  const startProgressSimulation = useCallback((id: string) => {
+  const startProgressSimulation = useCallback((id) => {
     activeUploadById.current.add(id);
     const start = performance.now();
-    const tick = (now: number) => {
+    const tick = (now) => {
       if (!activeUploadById.current.has(id)) return;
       const t = Math.min(1, (now - start) / UPLOAD_MS);
       setAttachments((prev) =>
@@ -74,8 +57,8 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
   }, []);
 
   const queueFiles = useCallback(
-    (incoming: File[]) => {
-      const valid: File[] = [];
+    (incoming) => {
+      const valid = [];
       for (const file of incoming) {
         if (!isAcceptedFile(file)) {
           alert(`"${file.name}" is not a supported type. Use JPEG, PNG, or PDF.`);
@@ -98,7 +81,7 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
         if (valid.length > room) {
           alert(`Only the first ${room} file(s) were added (${MAX_FILES} attachments max).`);
         }
-        const additions: Attachment[] = take.map((file) => ({
+        const additions = take.map((file) => ({
           id: crypto.randomUUID(),
           name: file.name,
           size: file.size,
@@ -114,7 +97,7 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
     [startProgressSimulation]
   );
 
-  const onCancelUpload = useCallback((id: string) => {
+  const onCancelUpload = useCallback((id) => {
     const h = rafByIdRef.current.get(id);
     if (h) cancelAnimationFrame(h);
     rafByIdRef.current.delete(id);
@@ -126,7 +109,7 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
     });
   }, []);
 
-  const onDeleteAttachment = useCallback((id: string) => {
+  const onDeleteAttachment = useCallback((id) => {
     setAttachments((prev) => {
       const a = prev.find((x) => x.id === id);
       if (a?.objectUrl) URL.revokeObjectURL(a.objectUrl);
@@ -134,12 +117,12 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
     });
   }, []);
 
-  const onView = useCallback((id: string) => {
+  const onView = useCallback((id) => {
     const a = attachmentsRef.current.find((x) => x.id === id);
     if (a?.objectUrl) window.open(a.objectUrl, '_blank', 'noopener,noreferrer');
   }, []);
 
-  const onPickFile = (fileList: FileList | null) => {
+  const onPickFile = (fileList) => {
     if (!fileList?.length) return;
     queueFiles(Array.from(fileList));
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -147,11 +130,11 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
 
   const onBrowse = () => fileInputRef.current?.click();
 
-  const onInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const onInputChange = (e) => {
     onPickFile(e.target.files);
   };
 
-  const onDrop: DragEventHandler<HTMLDivElement> = (e) => {
+  const onDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -159,17 +142,17 @@ export function EmployeeTransferDetailsContent({ onNext }: Props) {
     if (files?.length) queueFiles(Array.from(files));
   };
 
-  const onDragOver: DragEventHandler<HTMLDivElement> = (e) => {
+  const onDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
   };
 
-  const onDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+  const onDragEnter = (e) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const onDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+  const onDragLeave = (e) => {
     e.preventDefault();
     if (e.currentTarget === e.target) setIsDragging(false);
   };
@@ -308,12 +291,6 @@ function FieldGroup({
   required,
   children,
   delay = 0,
-}: {
-  label: string;
-  required?: boolean;
-  children: ReactNode;
-  width?: number | string;
-  delay?: number;
 }) {
   return (
     <motion.div
@@ -339,16 +316,8 @@ function DropZoneCard({
   onDragOver,
   onDragEnter,
   onDragLeave,
-}: {
-  isDragging: boolean;
-  disabled: boolean;
-  onBrowse: () => void;
-  onDrop: DragEventHandler<HTMLDivElement>;
-  onDragOver: DragEventHandler<HTMLDivElement>;
-  onDragEnter: DragEventHandler<HTMLDivElement>;
-  onDragLeave: DragEventHandler<HTMLDivElement>;
 }) {
-  const baseZoneStyle: CSSProperties = {
+  const baseZoneStyle = {
     display: 'flex',
     width: 600,
     padding: 20,
@@ -445,13 +414,6 @@ function UploadingFileItem({
   progress,
   isPdf,
   onCancel,
-}: {
-  filename: string;
-  uploadedBytes: number;
-  totalBytes: number;
-  progress: number;
-  isPdf: boolean;
-  onCancel: () => void;
 }) {
   const icon = isPdf ? '/assets/file-pdf.svg' : '/assets/file-jpg.svg';
   return (
@@ -552,12 +514,6 @@ function CompletedFileItem({
   isPdf,
   onDelete,
   onView,
-}: {
-  filename: string;
-  sizeLabel: string;
-  isPdf: boolean;
-  onDelete: () => void;
-  onView: () => void;
 }) {
   const icon = isPdf ? '/assets/file-pdf.svg' : '/assets/file-jpg.svg';
   return (
@@ -655,7 +611,7 @@ function CompletedFileItem({
 
 /* ── Size helpers (bytes) ── */
 
-function formatProgressPair(uploaded: number, total: number) {
+function formatProgressPair(uploaded, total) {
   const u = uploaded < 1024 * 1024 ? `${Math.max(0, Math.round(uploaded / 1024))}kb` : `${(uploaded / (1024 * 1024)).toFixed(1)} MB`;
   const t =
     total >= 1024 * 1024
@@ -664,7 +620,7 @@ function formatProgressPair(uploaded: number, total: number) {
   return `${u} of ${t}`;
 }
 
-function formatTotalSize(bytes: number) {
+function formatTotalSize(bytes) {
   if (bytes >= 1024 * 1024) {
     const mb = bytes / (1024 * 1024);
     return mb % 1 < 0.01 ? `${mb.toFixed(0)} MB` : `${mb.toFixed(1)} MB`;

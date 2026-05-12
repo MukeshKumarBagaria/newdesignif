@@ -2,8 +2,6 @@ import { motion } from 'framer-motion';
 import {
   MINOR_HEADS,
   SUB_MAJOR_HEADS,
-  type ChildHeadState,
-  type MajorHeadState,
 } from './data';
 import {
   LabeledField,
@@ -13,21 +11,14 @@ import {
 import { FormGrid } from './MajorHeadSection';
 import { ParentBanner, parentSummaryText } from './SubMajorHeadSection';
 
-type Props = {
-  major: MajorHeadState;
-  subMajor: ChildHeadState;
-  state: ChildHeadState;
-  onChange: (next: ChildHeadState) => void;
-};
-
 const swap = {
   initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
   exit:    { opacity: 0, y: -4 },
-  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
 };
 
-export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
+export function MinorHeadSection({ major, subMajor, state, onChange }) {
   const parentMajorId =
     major.mode === 'use' ? major.selectedId : null;
   const parentSubMajorId =
@@ -52,10 +43,7 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
       ? 'A Minor Head with this code already exists under the selected Sub Major.'
       : null;
 
-  const updateForm = <K extends keyof (ChildHeadState & { mode: 'create' })['form']>(
-    key: K,
-    value: (ChildHeadState & { mode: 'create' })['form'][K]
-  ) => {
+  const updateForm = (key, value) => {
     if (state.mode !== 'create') return;
     onChange({ mode: 'create', form: { ...state.form, [key]: value } });
   };
@@ -132,7 +120,7 @@ export function MinorHeadSection({ major, subMajor, state, onChange }: Props) {
   );
 }
 
-function subMajorSummaryText(subMajor: ChildHeadState): string {
+function subMajorSummaryText(subMajor) {
   if (subMajor.mode === 'use') {
     const sm = SUB_MAJOR_HEADS.find((s) => s.id === subMajor.selectedId);
     return sm ? `${sm.code} — ${sm.name}` : 'No Sub Major Head selected yet';

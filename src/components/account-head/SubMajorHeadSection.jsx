@@ -3,32 +3,23 @@ import { useMemo } from 'react';
 import {
   MAJOR_HEADS,
   SUB_MAJOR_HEADS,
-  type ChildHeadState,
-  type MajorHeadState,
 } from './data';
 import {
   LabeledField,
   SearchableDropdown,
   TextArea,
   TextField,
-  type DropdownItem,
 } from './primitives';
 import { FormGrid, ModeRow, UseExistingPanel } from './MajorHeadSection';
-
-type Props = {
-  major: MajorHeadState;
-  state: ChildHeadState;
-  onChange: (next: ChildHeadState) => void;
-};
 
 const swap = {
   initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
   exit:    { opacity: 0, y: -4 },
-  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
 };
 
-export function SubMajorHeadSection({ major, state, onChange }: Props) {
+export function SubMajorHeadSection({ major, state, onChange }) {
   /* Resolve the parent Major Head — drives both the filtered dropdown
      and the duplicate-check namespace below. */
   const parentMajor = useMemo(() => {
@@ -39,7 +30,7 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
   }, [major]);
   const parentMajorId = parentMajor?.id ?? null;
 
-  const items: DropdownItem[] = useMemo(() => {
+  const items = useMemo(() => {
     const filtered = parentMajorId
       ? SUB_MAJOR_HEADS.filter((s) => s.parentMajorId === parentMajorId)
       : SUB_MAJOR_HEADS;
@@ -70,7 +61,7 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
       ? 'A Sub Major Head with this code already exists under the selected Major Head.'
       : null;
 
-  const setMode = (mode: 'create' | 'use') => {
+  const setMode = (mode) => {
     if (mode === 'use') onChange({ mode: 'use', selectedId: null });
     else
       onChange({
@@ -87,10 +78,7 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
       });
   };
 
-  const updateForm = <K extends keyof (ChildHeadState & { mode: 'create' })['form']>(
-    key: K,
-    value: (ChildHeadState & { mode: 'create' })['form'][K]
-  ) => {
+  const updateForm = (key, value) => {
     if (state.mode !== 'create') return;
     onChange({ mode: 'create', form: { ...state.form, [key]: value } });
   };
@@ -187,7 +175,7 @@ export function SubMajorHeadSection({ major, state, onChange }: Props) {
  *  this section will be created/mapped under.
  *  ────────────────────────────────────────────────────────────────── */
 
-export function ParentBanner({ label, value }: { label: string; value: string }) {
+export function ParentBanner({ label, value }) {
   return (
     <div
       className="flex items-center w-full font-poppins"
@@ -238,7 +226,7 @@ export function ParentBanner({ label, value }: { label: string; value: string })
  *  selected so far. Reused by Sub Major + Minor sections.
  *  ────────────────────────────────────────────────────────────────── */
 
-export function parentSummaryText(major: MajorHeadState): string {
+export function parentSummaryText(major) {
   if (major.mode === 'use') {
     const m = MAJOR_HEADS.find((mh) => mh.id === major.selectedId);
     return m ? `${m.code} — ${m.name}` : 'No Major Head selected yet';

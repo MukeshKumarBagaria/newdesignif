@@ -13,33 +13,10 @@ import {
   SelectField,
   TextArea,
   TextField,
-  type DropdownItem,
 } from './primitives';
 import { MAJOR_HEADS, SECTORS } from './data';
 
-type ObjectMode = 'create' | 'map';
-type DetailMode = 'notRequired' | 'create';
-type LedgerClass = 'revenue' | 'capital' | 'both';
-type VoteClass = 'voted' | 'charged' | 'both';
-
-type ObjectForm = {
-  code: string;
-  englishName: string;
-  hindiName: string;
-  sector: string;
-  ledgerClass: LedgerClass;
-  voteClass: VoteClass;
-  remarks: string;
-};
-
-type DetailForm = {
-  code: string;
-  englishName: string;
-  hindiName: string;
-  remarks: string;
-};
-
-const emptyObjectForm: ObjectForm = {
+const emptyObjectForm = {
   code: '',
   englishName: '',
   hindiName: '',
@@ -49,7 +26,7 @@ const emptyObjectForm: ObjectForm = {
   remarks: '',
 };
 
-const emptyDetailForm: DetailForm = {
+const emptyDetailForm = {
   code: '',
   englishName: '',
   hindiName: '',
@@ -57,11 +34,11 @@ const emptyDetailForm: DetailForm = {
 };
 
 export function ObjectDetailHeadScreen() {
-  const [objectMode, setObjectMode] = useState<ObjectMode>('create');
-  const [detailMode, setDetailMode] = useState<DetailMode>('notRequired');
-  const [objectForm, setObjectForm] = useState<ObjectForm>(emptyObjectForm);
-  const [mappedObjectId, setMappedObjectId] = useState<string | null>(null);
-  const [detailForm, setDetailForm] = useState<DetailForm>(emptyDetailForm);
+  const [objectMode, setObjectMode] = useState('create');
+  const [detailMode, setDetailMode] = useState('notRequired');
+  const [objectForm, setObjectForm] = useState(emptyObjectForm);
+  const [mappedObjectId, setMappedObjectId] = useState(null);
+  const [detailForm, setDetailForm] = useState(emptyDetailForm);
 
   useEffect(() => {
     if (objectMode === 'map') {
@@ -69,7 +46,7 @@ export function ObjectDetailHeadScreen() {
     }
   }, [objectMode]);
 
-  const objectOptions: DropdownItem[] = useMemo(
+  const objectOptions = useMemo(
     () =>
       MAJOR_HEADS.map((m) => ({
         id: m.id,

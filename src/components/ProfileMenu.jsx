@@ -1,17 +1,11 @@
 import { motion } from 'framer-motion';
 
-type ProfileMenuProps = {
-  onClose?: () => void;
-  stepperLayout?: 'side' | 'top';
-  onChangeStepperLayout?: (layout: 'side' | 'top') => void;
-};
-
 // Matches Figma node 5938-44345 — user profile/role dropdown
 export function ProfileMenu({
   onClose,
   stepperLayout = 'side',
   onChangeStepperLayout,
-}: ProfileMenuProps) {
+}) {
   void onClose;
   return (
     <div
@@ -44,7 +38,7 @@ export function ProfileMenu({
           role="tablist"
           aria-label="Stepper position"
         >
-          {(['side', 'top'] as const).map((pos) => {
+          {(['side', 'top']).map((pos) => {
             const active = stepperLayout === pos;
             const label = pos === 'side' ? 'Left Side' : 'Top';
             return (

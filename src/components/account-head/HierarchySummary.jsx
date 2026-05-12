@@ -4,29 +4,9 @@ import {
   MAJOR_HEADS,
   MINOR_HEADS,
   SUB_MAJOR_HEADS,
-  type ChildHeadState,
-  type HierarchyStatus,
-  type MajorHeadState,
   badgeFor,
 } from './data';
 import { HierarchyBadge } from './primitives';
-
-type Props = {
-  major: MajorHeadState;
-  subMajor: ChildHeadState;
-  minor: ChildHeadState;
-  /** Click on a row scrolls / opens the relevant accordion. */
-  onJump?: (id: 'major' | 'subMajor' | 'minor') => void;
-};
-
-type RowDescriptor = {
-  id: 'major' | 'subMajor' | 'minor';
-  label: string;
-  code: string | null;
-  name: string | null;
-  status: HierarchyStatus;
-  enabled: boolean;
-};
 
 /**
  * HierarchySummary — sticky right-rail preview that mirrors the user's
@@ -45,10 +25,10 @@ type RowDescriptor = {
  *   │     —                            │
  *   └──────────────────────────────────┘
  */
-export function HierarchySummary({ major, subMajor, minor, onJump }: Props) {
-  const rows = useMemo<RowDescriptor[]>(() => {
+export function HierarchySummary({ major, subMajor, minor, onJump }) {
+  const rows = useMemo(() => {
     /* Major */
-    let majorRow: RowDescriptor;
+    let majorRow;
     if (major.mode === 'use') {
       const m = MAJOR_HEADS.find((mh) => mh.id === major.selectedId) ?? null;
       majorRow = {
@@ -72,7 +52,7 @@ export function HierarchySummary({ major, subMajor, minor, onJump }: Props) {
 
     /* Sub Major */
     const subEnabled = isComplete(major);
-    let subRow: RowDescriptor;
+    let subRow;
     if (subMajor.mode === 'use') {
       const sm = SUB_MAJOR_HEADS.find((s) => s.id === subMajor.selectedId) ?? null;
       subRow = {
@@ -96,7 +76,7 @@ export function HierarchySummary({ major, subMajor, minor, onJump }: Props) {
 
     /* Minor */
     const minorEnabled = subEnabled && isChildComplete(subMajor);
-    let minorRow: RowDescriptor;
+    let minorRow;
     if (minor.mode === 'use') {
       const mn = MINOR_HEADS.find((m) => m.id === minor.selectedId) ?? null;
       minorRow = {
@@ -268,10 +248,6 @@ function SummaryRow({
   index,
   row,
   onJump,
-}: {
-  index: number;
-  row: RowDescriptor;
-  onJump?: () => void;
 }) {
   const filled = row.status !== null;
   const dotBg = !row.enabled
@@ -388,7 +364,7 @@ function SummaryRow({
   );
 }
 
-function ProgressTrack({ count }: { count: number }) {
+function ProgressTrack({ count }) {
   return (
     <div
       className="flex items-center"
@@ -415,14 +391,14 @@ function ProgressTrack({ count }: { count: number }) {
   );
 }
 
-/* Local helpers — duplicate of `data.ts` to avoid a circular import. */
+/* Local helpers — duplicate of `data.js` to avoid a circular import. */
 
-function isComplete(s: MajorHeadState): boolean {
+function isComplete(s) {
   if (s.mode === 'use') return !!s.selectedId;
   return s.form.code.trim().length >= 4 && !!s.form.englishName.trim();
 }
 
-function isChildComplete(s: ChildHeadState): boolean {
+function isChildComplete(s) {
   if (s.mode === 'use') return !!s.selectedId;
   return s.form.code.trim().length >= 2 && !!s.form.englishName.trim();
 }

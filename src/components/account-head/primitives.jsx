@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { CaretDown, IconCheck, Search } from '../icons';
@@ -25,21 +24,12 @@ const FIELD_BG = '#FFFFFF';
  * slides between the two options. Used at the top of every section.
  */
 
-export type ModeOption<T extends string> = { value: T; label: string };
-
-export function ModeToggle<T extends string>({
+export function ModeToggle({
   options,
   value,
   onChange,
   disabled,
   layoutId,
-}: {
-  options: [ModeOption<T>, ModeOption<T>];
-  value: T;
-  onChange: (v: T) => void;
-  disabled?: boolean;
-  /** Shared `layoutId` ensures the active pill morphs smoothly inside its row. */
-  layoutId: string;
 }) {
   return (
     <div
@@ -127,13 +117,6 @@ export function LabeledField({
   error,
   children,
   className = '',
-}: {
-  label: ReactNode;
-  required?: boolean;
-  hint?: ReactNode;
-  error?: string | null;
-  children: ReactNode;
-  className?: string;
 }) {
   return (
     <div className={`flex flex-col items-start ${className}`} style={{ gap: 8 }}>
@@ -176,8 +159,6 @@ export function LabeledField({
  * (40px tall, 12px radius, 1px #5A72A5 border, white surface).
  */
 
-type Tone = 'default' | 'error';
-
 export function TextField({
   value,
   onChange,
@@ -190,18 +171,6 @@ export function TextField({
   tone = 'default',
   className = '',
   ariaLabel,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  type?: 'text' | 'number';
-  maxLength?: number;
-  prefix?: ReactNode;
-  inputMode?: 'numeric' | 'text';
-  align?: 'left' | 'center';
-  tone?: Tone;
-  className?: string;
-  ariaLabel?: string;
 }) {
   const borderColor = tone === 'error' ? '#B8141A' : '#5A72A5';
   return (
@@ -257,12 +226,6 @@ export function TextArea({
   placeholder,
   rows = 3,
   maxLength,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  rows?: number;
-  maxLength?: number;
 }) {
   return (
     <textarea
@@ -290,16 +253,11 @@ export function TextArea({
  * Pill-style radio group used for Revenue/Capital/Both, Voted/Charged/Both.
  */
 
-export function RadioGroup<T extends string>({
+export function RadioGroup({
   options,
   value,
   onChange,
   ariaLabel,
-}: {
-  options: { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-  ariaLabel?: string;
 }) {
   return (
     <div role="radiogroup" aria-label={ariaLabel} className="flex flex-wrap items-center" style={{ gap: 8 }}>
@@ -358,15 +316,6 @@ export function RadioGroup<T extends string>({
  *  (the accordion body uses overflow:hidden during enter/exit).
  *  ────────────────────────────────────────────────────────────────── */
 
-export type DropdownItem = {
-  id: string;
-  label: string;
-  /** Sub-line shown beneath the label (sector / parent code). */
-  caption?: string;
-  /** Pre-pended monospace badge ("2202", "01", "102"). */
-  code?: string;
-};
-
 export function SearchableDropdown({
   items,
   selectedId,
@@ -375,21 +324,13 @@ export function SearchableDropdown({
   emptyText = 'No matches found.',
   disabled,
   ariaLabel,
-}: {
-  items: DropdownItem[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
-  placeholder?: string;
-  emptyText?: string;
-  disabled?: boolean;
-  ariaLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const triggerRef = useRef(null);
+  const popRef = useRef(null);
+  const inputRef = useRef(null);
+  const [pos, setPos] = useState(null);
 
   const selected = useMemo(
     () => items.find((i) => i.id === selectedId) || null,
@@ -427,15 +368,15 @@ export function SearchableDropdown({
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
+    const onDoc = (e) => {
       const t = triggerRef.current;
       const p = popRef.current;
-      const target = e.target as Node;
+      const target = e.target;
       if (t?.contains(target)) return;
       if (p?.contains(target)) return;
       setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
@@ -653,17 +594,11 @@ export function SelectField({
   onChange,
   placeholder = 'Select…',
   disabled,
-}: {
-  options: string[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const triggerRef = useRef(null);
+  const popRef = useRef(null);
+  const [pos, setPos] = useState(null);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -684,15 +619,15 @@ export function SelectField({
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
+    const onDoc = (e) => {
       const t = triggerRef.current;
       const p = popRef.current;
-      const target = e.target as Node;
+      const target = e.target;
       if (t?.contains(target)) return;
       if (p?.contains(target)) return;
       setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
@@ -832,7 +767,7 @@ export function SelectField({
  * and the hierarchy summary cards.
  */
 
-export function HierarchyBadge({ status }: { status: 'CREATED' | 'MAPPED' | null }) {
+export function HierarchyBadge({ status }) {
   if (!status) {
     return (
       <span

@@ -1,22 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { CaretDown, IconCheck } from '../icons';
 import { EditableLabel, NextButton } from '../form';
 import { DatePicker, TimePicker } from '../pickers';
 
-type Props = { onNext: () => void };
-
 /**
  * TransferTravelJourneyContent — Figma node 5938:50909.
- * Visual spec is locked to the Figma design; inputs are wired to real
- * native pickers (date/time) and a custom dropdown so the section is
- * interactive end-to-end.
  */
 
-type FieldProps = { label: ReactNode; required?: boolean; width?: number | string; children: ReactNode };
-
-function FieldGroup({ label, required, children }: FieldProps) {
+function FieldGroup({ label, required, children }) {
   return (
     <div className="flex flex-col items-start min-w-0" style={{ gap: 8 }}>
       <EditableLabel required={required}>{label}</EditableLabel>
@@ -37,7 +29,7 @@ const inputTextStyle = {
   fontSize: 14,
   fontWeight: 500,
   color: '#142952',
-  lineHeight: 'normal' as const,
+  lineHeight: 'normal',
 };
 
 /* ─── Plain text field ─── */
@@ -46,10 +38,6 @@ function TextField({
   value,
   onChange,
   placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
 }) {
   return (
     <input
@@ -69,20 +57,16 @@ function Dropdown({
   value,
   options,
   onChange,
-}: {
-  value: string;
-  options: string[];
-  onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    const onDoc = (e) => {
+      if (!wrapRef.current?.contains(e.target)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
@@ -202,11 +186,6 @@ function PillCard({
   active,
   width,
   onClick,
-}: {
-  label: string;
-  active: boolean;
-  width: number;
-  onClick: () => void;
 }) {
   return (
     <motion.button
@@ -245,7 +224,7 @@ function PillCard({
   );
 }
 
-function SectionBanner({ children }: { children: ReactNode }) {
+function SectionBanner({ children }) {
   return (
     <div
       className="flex items-center w-full"
@@ -267,17 +246,17 @@ function SectionBanner({ children }: { children: ReactNode }) {
 
 const CONVEYANCE_OPTIONS = ['Road', 'Rail', 'Air', 'Sea'];
 
-export function TransferTravelJourneyContent({ onNext }: Props) {
+export function TransferTravelJourneyContent({ onNext }) {
   const [fromPlace, setFromPlace] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [fromTime, setFromTime] = useState('');
   const [conveyance, setConveyance] = useState('Road');
-  const [vehicle, setVehicle] = useState<'gov' | 'private'>('private');
+  const [vehicle, setVehicle] = useState('private');
 
   const [toPlace, setToPlace] = useState('');
   const [toDate, setToDate] = useState('');
   const [toTime, setToTime] = useState('');
-  const [luggage, setLuggage] = useState<'yes' | 'no'>('no');
+  const [luggage, setLuggage] = useState('no');
 
   return (
     <motion.div

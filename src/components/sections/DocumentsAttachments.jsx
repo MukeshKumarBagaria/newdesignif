@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { IconCheck } from '../icons';
 import { EditableLabel, NextButton } from '../form';
 
-type Props = { onNext: () => void };
-
 const items = [
   { key: 'luggage', label: 'Original Luggage Charges Receipt (If applicable)' },
   { key: 'ticket', label: 'Original Travel Ticket' },
@@ -12,20 +10,9 @@ const items = [
 
 /**
  * DocumentsAttachmentsContent — Figma node 5938:51027.
- *
- * Locked spec:
- *   Outer gap     : 32 (label group → next button)
- *   Group gap     : 8  (label → card row)
- *   Card row gap  : 24
- *   Card          : 400×80 · padding 12 · radius 16 · items-start justify-between
- *                   inactive bg #E9EFFB / border 1px #BED0F4 / text #5A72A5
- *                   active   bg #255AC3 / border 1px white / text white /
- *                            shadow 0 1 2 rgba(20,49,107,0.5) / white 24px check-circle
- *   Card text     : Poppins Medium 16 · line-height 24 (active wraps within 214px)
- *   Next button   : right-aligned NextButton (100×48)
  */
-export function DocumentsAttachmentsContent({ onNext }: Props) {
-  const [selected, setSelected] = useState<string | null>('luggage');
+export function DocumentsAttachmentsContent({ onNext }) {
+  const [selected, setSelected] = useState('luggage');
 
   return (
     <motion.div

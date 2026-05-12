@@ -18,16 +18,7 @@ import { motion } from 'framer-motion';
  *   label: Poppins Medium 14
  */
 
-export type ModuleTile = {
-  label: string;
-  icon: string;
-  bg: string;
-  border: string;
-  iconBg: string;
-  text: string;
-};
-
-export const moduleTiles: ModuleTile[] = [
+export const moduleTiles = [
   {
     label: 'Budget',
     icon: '/assets/icon-cardholder.svg',
@@ -78,12 +69,7 @@ export const moduleTiles: ModuleTile[] = [
   },
 ];
 
-type Props = {
-  selected?: string;
-  onSelect?: (tile: ModuleTile) => void;
-};
-
-export function ModuleGrid({ selected, onSelect }: Props = {}) {
+export function ModuleGrid({ selected, onSelect } = {}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -6, scale: 0.98 }}

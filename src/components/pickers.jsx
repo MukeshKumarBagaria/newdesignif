@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import type { ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Calendar, CaretDown, IconClock } from './icons';
@@ -15,7 +14,7 @@ const inputShell = {
 const inputText = {
   fontSize: 14,
   fontWeight: 500,
-  lineHeight: 'normal' as const,
+  lineHeight: 'normal',
 };
 
 /* ──────────────────────────────────────────────────────────────────
@@ -32,16 +31,9 @@ function Popover({
   estimatedHeight = 360,
   onClose,
   children,
-}: {
-  triggerRef: React.RefObject<HTMLElement | null>;
-  open: boolean;
-  width: number;
-  estimatedHeight?: number;
-  onClose: () => void;
-  children: ReactNode;
 }) {
-  const [pos, setPos] = useState<{ top: number; left: number; placement: 'below' | 'above' } | null>(null);
-  const popRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState(null);
+  const popRef = useRef(null);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -58,7 +50,7 @@ function Popover({
 
       const spaceBelow = window.innerHeight - r.bottom;
       const spaceAbove = r.top;
-      const placement: 'below' | 'above' =
+      const placement =
         spaceBelow < popHeight + 12 && spaceAbove > spaceBelow ? 'above' : 'below';
       const top = placement === 'below' ? r.bottom + 6 : Math.max(margin, r.top - popHeight - 6);
 
@@ -77,15 +69,15 @@ function Popover({
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
+    const onDoc = (e) => {
       const t = triggerRef.current;
       const p = popRef.current;
-      const target = e.target as Node;
+      const target = e.target;
       if (t?.contains(target)) return;
       if (p?.contains(target)) return;
       onClose();
     };
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('mousedown', onDoc);
@@ -134,30 +126,30 @@ const MONTH_NAMES = [
 ];
 const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-function pad(n: number) {
+function pad(n) {
   return n.toString().padStart(2, '0');
 }
 
-function fmtISO(d: Date) {
+function fmtISO(d) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
-function parseISO(v: string): Date | null {
+function parseISO(v) {
   if (!v) return null;
   const [y, m, d] = v.split('-').map(Number);
   if (!y || !m || !d) return null;
   return new Date(y, m - 1, d);
 }
 
-function fmtDisplay(d: Date) {
+function fmtDisplay(d) {
   return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-function buildMonthGrid(year: number, month: number) {
+function buildMonthGrid(year, month) {
   const first = new Date(year, month, 1);
   const startDow = first.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: { date: Date; inMonth: boolean }[] = [];
+  const cells = [];
   for (let i = 0; i < startDow; i++) {
     const date = new Date(year, month, -startDow + i + 1);
     cells.push({ date, inMonth: false });
@@ -178,13 +170,9 @@ export function DatePicker({
   value,
   onChange,
   placeholder = 'Select Date',
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef(null);
   const selected = parseISO(value);
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState(() => {
@@ -201,14 +189,14 @@ export function DatePicker({
   const cells = useMemo(() => buildMonthGrid(view.year, view.month), [view]);
   const display = selected ? fmtDisplay(selected) : '';
 
-  const stepMonth = (delta: number) => {
+  const stepMonth = (delta) => {
     setView((v) => {
       const d = new Date(v.year, v.month + delta, 1);
       return { year: d.getFullYear(), month: d.getMonth() };
     });
   };
 
-  const isSameDay = (a: Date, b: Date | null) =>
+  const isSameDay = (a, b) =>
     !!b &&
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
@@ -392,23 +380,23 @@ export function DatePicker({
  *  Value format: 'HH:MM' (24h)
  *  ────────────────────────────────────────────────────────────────── */
 
-function parseTime(v: string): { h12: number; m: number; period: 'AM' | 'PM' } {
+function parseTime(v) {
   if (!v) return { h12: 9, m: 0, period: 'AM' };
   const [hStr = '0', mStr = '0'] = v.split(':');
   const h24 = Number(hStr) || 0;
   const m = Number(mStr) || 0;
-  const period: 'AM' | 'PM' = h24 >= 12 ? 'PM' : 'AM';
+  const period = h24 >= 12 ? 'PM' : 'AM';
   const h12 = ((h24 + 11) % 12) + 1;
   return { h12, m, period };
 }
 
-function fmtTimeISO(h12: number, m: number, period: 'AM' | 'PM') {
+function fmtTimeISO(h12, m, period) {
   let h24 = h12 % 12;
   if (period === 'PM') h24 += 12;
   return `${pad(h24)}:${pad(m)}`;
 }
 
-function fmtTimeDisplay(v: string) {
+function fmtTimeDisplay(v) {
   if (!v) return '';
   const { h12, m, period } = parseTime(v);
   return `${h12}:${pad(m)} ${period}`;
@@ -417,27 +405,21 @@ function fmtTimeDisplay(v: string) {
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
-function ScrollColumn<T>({
+function ScrollColumn({
   items,
   selected,
   onChange,
   format,
   width,
-}: {
-  items: T[];
-  selected: T;
-  onChange: (v: T) => void;
-  format: (v: T) => string;
-  width: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const idx = items.findIndex((i) => i === selected);
     if (idx < 0) return;
-    const target = el.children[idx + 1] as HTMLElement | undefined;
+    const target = el.children[idx + 1];
     if (target) {
       el.scrollTo({
         top: target.offsetTop - el.clientHeight / 2 + target.clientHeight / 2,
@@ -495,17 +477,13 @@ export function TimePicker({
   value,
   onChange,
   placeholder = 'Select Time',
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef(null);
   const parsed = parseTime(value);
   const [h12, setH12] = useState(parsed.h12);
   const [m, setM] = useState(parsed.m);
-  const [period, setPeriod] = useState<'AM' | 'PM'>(parsed.period);
+  const [period, setPeriod] = useState(parsed.period);
 
   useEffect(() => {
     if (open) {
@@ -611,7 +589,7 @@ export function TimePicker({
               border: '1px solid #E1EBFB',
             }}
           >
-            {(['AM', 'PM'] as const).map((p) => {
+            {(['AM', 'PM']).map((p) => {
               const active = p === period;
               return (
                 <button
@@ -642,7 +620,7 @@ export function TimePicker({
               onClick={() => {
                 const now = new Date();
                 const h24 = now.getHours();
-                const newPeriod: 'AM' | 'PM' = h24 >= 12 ? 'PM' : 'AM';
+                const newPeriod = h24 >= 12 ? 'PM' : 'AM';
                 const newH12 = ((h24 + 11) % 12) + 1;
                 let newMin = Math.round(now.getMinutes() / 5) * 5;
                 if (newMin === 60) newMin = 0;

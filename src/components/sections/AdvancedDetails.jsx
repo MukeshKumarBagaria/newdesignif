@@ -4,28 +4,12 @@ import { EditableLabel } from '../form';
 
 /**
  * AdvancedDetailsContent — Figma node 5938:51057.
- *
- * Locked spec:
- *   Row layout    : input pair (gap 24) · gap 120 · totals card (497px)
- *                   wraps to next line (24px row-gap) when row would overflow
- *   Input field   : 300×40 · padding 10/12 · radius 12 · bg white · 1px #5A72A5
- *                   placeholder Poppins Medium 14 / #5A72A5
- *   Totals card   : self-stretch · padding 12 · gap 8 · radius 16 · bg white · w-497
- *                   contains 2 FetchField cells (each flex-1)
- *   FetchField    : bg #F2F6FD · border 1px #BED0F4 · padding 8/20 · gap 4 · radius 12
- *                   label Poppins Medium 14 / #2D3953
- *                   value Poppins SemiBold 16 / #255AC3 (Total DA)
- *                                            #2C6C13 (Total — green)
  */
 
 function AmountInput({
   value,
   onChange,
   placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
 }) {
   return (
     <input
@@ -54,10 +38,6 @@ function FetchCell({
   label,
   value,
   valueColor,
-}: {
-  label: string;
-  value: string;
-  valueColor: string;
 }) {
   return (
     <div

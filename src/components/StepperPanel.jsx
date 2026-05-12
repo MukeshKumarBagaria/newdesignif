@@ -1,22 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
-export type StepState = 'idle' | 'active' | 'completed';
-
-export type StepperItem = {
-  id: string;
-  index: string;
-  label: string;
-  state: StepState;
-};
-
-type Props = {
-  steps: StepperItem[];
-  onSelect: (id: string) => void;
-  expanded?: boolean;
-  orientation?: 'vertical' | 'horizontal';
-};
-
 /**
  * Figma dashed connector line (node 5830:83647 / 5938:51325).
  * Mirrors the original SVG 1-for-1: viewBox 0 0 50 70, line x=25.75 from y=10.75→59.25,
@@ -25,9 +9,6 @@ type Props = {
 function DashSpacer({
   tone = 'idle',
   axis = 'vertical',
-}: {
-  tone?: 'idle' | 'completed';
-  axis?: 'vertical' | 'horizontal';
 }) {
   const color = tone === 'completed' ? '#358217' : '#808080';
   if (axis === 'horizontal') {
@@ -92,7 +73,7 @@ function DashSpacer({
 }
 
 /** Styles per step state, tuned to blend with the Figma palette. */
-function pillStyle(state: StepState) {
+function pillStyle(state) {
   switch (state) {
     case 'active':
       return {
@@ -118,7 +99,7 @@ function pillStyle(state: StepState) {
   }
 }
 
-function badgeStyle(state: StepState) {
+function badgeStyle(state) {
   switch (state) {
     case 'active':
       return 'border-white bg-white text-brand-500';
@@ -130,17 +111,6 @@ function badgeStyle(state: StepState) {
 }
 
 /**
- * Status / progress panel.
- *
- * Matches Figma:
- *  – Expanded  → node 5830:83642 (width 279px, pills with index + label)
- *  – Collapsed → node 5938:51321 (width 90px, 50×50 pills, badges only)
- *
- * Container tokens (both states):
- *   border-radius 24px · border 1px solid #BED0F4 · background #FFF
- *   padding 20px · flex-col · gap 4px
- */
-/**
  * Wraps the horizontal stepper and tracks whether it's currently
  * pinned against the header. Uses a 1px sentinel above the sticky
  * element + IntersectionObserver — when the sentinel scrolls out of
@@ -148,11 +118,9 @@ function badgeStyle(state: StepState) {
  */
 function HorizontalStepperContainer({
   children,
-}: {
-  children: (stuck: boolean) => React.ReactNode;
 }) {
   const [stuck, setStuck] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -193,7 +161,7 @@ export function StepperPanel({
   onSelect,
   expanded = true,
   orientation = 'vertical',
-}: Props) {
+}) {
   if (orientation === 'horizontal') {
     return (
       <HorizontalStepperContainer>

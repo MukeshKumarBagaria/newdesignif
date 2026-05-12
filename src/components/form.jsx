@@ -1,4 +1,3 @@
-import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { CaretDown, IconCheck, IconFilePlus, IconLink, IconPaperclip, IconPen, IconTrash, NextButtonArrow } from './icons';
 
@@ -8,12 +7,6 @@ export function Field({
   children,
   hint,
   className = '',
-}: {
-  label: ReactNode;
-  required?: boolean;
-  children: ReactNode;
-  hint?: ReactNode;
-  className?: string;
 }) {
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
@@ -27,12 +20,7 @@ export function Field({
   );
 }
 
-type TextInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  leadingIcon?: ReactNode;
-  trailingIcon?: ReactNode;
-};
-
-export function TextInput({ leadingIcon, trailingIcon, className = '', ...rest }: TextInputProps) {
+export function TextInput({ leadingIcon, trailingIcon, className = '', ...rest }) {
   return (
     <div className={`relative group ${className}`}>
       {leadingIcon && (
@@ -59,10 +47,6 @@ export function ReadOnlyField({
   label,
   value,
   highlight,
-}: {
-  label: string;
-  value: ReactNode;
-  highlight?: boolean;
 }) {
   return (
     <div className="px-4 py-2.5 min-w-0">
@@ -97,7 +81,6 @@ export function ReadOnlyField({
  *   right  → top + bottom + left + right, rounded-r
  *   single → all four borders + both rounded sides
  */
-export type FetchFieldSide = 'left' | 'middle' | 'right' | 'single';
 
 export function FetchField({
   label,
@@ -106,13 +89,6 @@ export function FetchField({
   highlight,
   onChange,
   readOnly = true,
-}: {
-  label: string;
-  value: string;
-  side?: FetchFieldSide;
-  highlight?: boolean;
-  onChange?: (v: string) => void;
-  readOnly?: boolean;
 }) {
   const isLeft = side === 'left' || side === 'single';
   const isRight = side === 'right' || side === 'single';
@@ -169,12 +145,6 @@ export function SelectInput({
   value,
   onClick,
   className = '',
-}: {
-  placeholder?: string;
-  leadingIcon?: ReactNode;
-  value?: string;
-  onClick?: () => void;
-  className?: string;
 }) {
   return (
     <button
@@ -196,10 +166,6 @@ export function PillToggle({
   options,
   value,
   onChange,
-}: {
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (v: string) => void;
 }) {
   return (
     <div className="inline-flex items-center gap-2">
@@ -230,7 +196,7 @@ export function PillToggle({
   );
 }
 
-export function AttachmentField({ filename, onSelect }: { filename: string; onSelect?: () => void }) {
+export function AttachmentField({ filename, onSelect }) {
   void onSelect;
   return (
     <div className="flex items-center gap-3">
@@ -266,7 +232,7 @@ export function AttachmentField({ filename, onSelect }: { filename: string; onSe
  * EditableLabel — Figma node 5830:83877 family.
  *  Poppins SemiBold 16px / #2D3953  · required marker #B8141A
  */
-export function EditableLabel({ children, required }: { children: ReactNode; required?: boolean }) {
+export function EditableLabel({ children, required }) {
   return (
     <p
       className="font-poppins"
@@ -298,14 +264,6 @@ export function EditableField({
   onIconClick,
   ariaLabel,
   className = '',
-}: {
-  value?: string;
-  onChange?: (v: string) => void;
-  placeholder?: string;
-  type?: 'text' | 'date' | 'number';
-  onIconClick?: () => void;
-  ariaLabel?: string;
-  className?: string;
 }) {
   const border = '1px solid #5A72A5';
   return (
@@ -367,10 +325,6 @@ export function AttachmentPicker({
   filename,
   onSelect,
   onDelete,
-}: {
-  filename: string;
-  onSelect?: () => void;
-  onDelete?: () => void;
 }) {
   return (
     <div className="flex items-center gap-2 w-full">
@@ -451,10 +405,6 @@ export function NextButton({
   onClick,
   label = 'Next',
   className = '',
-}: {
-  onClick?: () => void;
-  label?: string;
-  className?: string;
 }) {
   return (
     <motion.button
@@ -493,8 +443,6 @@ export function Button({
   children,
   className = '',
   ...props
-}: HTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'outline' | 'success' | 'warning';
 }) {
   const variants = {
     primary:

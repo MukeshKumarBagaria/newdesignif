@@ -1,9 +1,7 @@
 import { motion } from 'framer-motion';
-import { FetchField, NextButton, type FetchFieldSide } from '../form';
+import { FetchField, NextButton } from '../form';
 
-type Props = { onNext: () => void };
-
-const row1: { label: string; value: string }[] = [
+const row1 = [
   { label: 'Employee Name', value: 'Mukesh Kumar' },
   { label: 'Employee Code', value: '99880DSE' },
   { label: 'Gender', value: 'Male' },
@@ -11,7 +9,7 @@ const row1: { label: string; value: string }[] = [
   { label: 'Office', value: 'Bhopal Head Office' },
 ];
 
-export function EmployeeDetailsContent({ onNext }: Props) {
+export function EmployeeDetailsContent({ onNext }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -25,7 +23,7 @@ export function EmployeeDetailsContent({ onNext }: Props) {
         {/* Row 1 — 5 connected fetched fields (Figma node 5830:83000) */}
         <div className="flex items-stretch w-full">
           {row1.map((cell, i) => {
-            const side: FetchFieldSide =
+            const side =
               i === 0 ? 'left' : i === row1.length - 1 ? 'right' : 'middle';
             return (
               <motion.div

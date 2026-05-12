@@ -1,27 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import type { ReactNode } from 'react';
 import { IconCheckCircle } from './icons';
-
-type Props = {
-  index: string;
-  title: string;
-  expanded: boolean;
-  completed?: boolean;
-  /**
-   * When `true`, the card body is sealed and the trigger is disabled.
-   * Used by the Unified Account Head Creation flow to gate child sections
-   * behind their parent. A short hint appears on hover.
-   */
-  locked?: boolean;
-  /** Optional explanation for why the section is locked. */
-  lockedHint?: string;
-  /** Optional pill rendered to the right of the title (e.g. CREATED / MAPPED). */
-  badge?: ReactNode;
-  /** Optional one-line subtitle under the title. */
-  subtitle?: ReactNode;
-  onToggle: () => void;
-  children?: ReactNode;
-};
 
 /**
  * SectionCard — matches Figma nodes 5938:50582 (header) + 5938:50592 (body)
@@ -40,7 +18,7 @@ export function SectionCard({
   subtitle,
   onToggle,
   children,
-}: Props) {
+}) {
   const effectiveExpanded = expanded && !locked;
   return (
     <motion.div layout className="w-full flex flex-col">
@@ -204,7 +182,7 @@ export function SectionCard({
   );
 }
 
-function LockGlyph({ size = 18 }: { size?: number }) {
+function LockGlyph({ size = 18 }) {
   return (
     <svg
       width={size}

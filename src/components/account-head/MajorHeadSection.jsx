@@ -4,7 +4,6 @@ import {
   MAJOR_HEADS,
   SECTORS,
   SUB_SECTORS,
-  type MajorHeadState,
 } from './data';
 import {
   LabeledField,
@@ -13,25 +12,19 @@ import {
   SelectField,
   TextArea,
   TextField,
-  type DropdownItem,
 } from './primitives';
-
-type Props = {
-  state: MajorHeadState;
-  onChange: (next: MajorHeadState) => void;
-};
 
 /* Cross-fade transition shared by every "swap-form / swap-dropdown" body. */
 const swap = {
   initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
   exit:    { opacity: 0, y: -4 },
-  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
 };
 
-export function MajorHeadSection({ state, onChange }: Props) {
+export function MajorHeadSection({ state, onChange }) {
   /* Derived ─────────────────────────── */
-  const items: DropdownItem[] = useMemo(
+  const items = useMemo(
     () =>
       MAJOR_HEADS.map((m) => ({
         id: m.id,
@@ -61,7 +54,7 @@ export function MajorHeadSection({ state, onChange }: Props) {
       : null;
 
   /* Update helpers ─────────────────── */
-  const setMode = (mode: 'create' | 'use') => {
+  const setMode = (mode) => {
     if (mode === 'use') onChange({ mode: 'use', selectedId: null });
     else onChange({
       mode: 'create',
@@ -78,10 +71,7 @@ export function MajorHeadSection({ state, onChange }: Props) {
     });
   };
 
-  const updateForm = <K extends keyof (MajorHeadState & { mode: 'create' })['form']>(
-    key: K,
-    value: (MajorHeadState & { mode: 'create' })['form'][K]
-  ) => {
+  const updateForm = (key, value) => {
     if (state.mode !== 'create') return;
     const nextForm = { ...state.form, [key]: value };
     if (key === 'sector') nextForm.subSector = '';
@@ -199,11 +189,6 @@ export function ModeRow({
   onChange,
   layoutId,
   labels,
-}: {
-  mode: 'create' | 'use';
-  onChange: (m: 'create' | 'use') => void;
-  layoutId: string;
-  labels: [string, string];
 }) {
   return (
     <div
@@ -238,7 +223,7 @@ export function ModeRow({
   );
 }
 
-export function FormGrid({ children }: { children: React.ReactNode }) {
+export function FormGrid({ children }) {
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-y-4 gap-x-4">
       <style>{`
@@ -253,10 +238,6 @@ export function UseExistingPanel({
   title,
   description,
   dropdown,
-}: {
-  title: string;
-  description: string;
-  dropdown: React.ReactNode;
 }) {
   return (
     <div

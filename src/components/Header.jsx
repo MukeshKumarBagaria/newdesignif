@@ -13,14 +13,10 @@ import { ProfileMenu } from './ProfileMenu';
  * - notification dot: #ff6a00 / text #4c2000
  * - profile pill: #1f1c4a, rounded 16px
  */
-type HeaderProps = {
-  stepperLayout?: 'side' | 'top';
-  onChangeStepperLayout?: (layout: 'side' | 'top') => void;
-};
 
-export function Header({ stepperLayout = 'side', onChangeStepperLayout }: HeaderProps) {
-  const [lang, setLang] = useState<'en' | 'hi'>('en');
-  const [fontStep, setFontStep] = useState<0 | 1 | 2>(1);
+export function Header({ stepperLayout = 'side', onChangeStepperLayout }) {
+  const [lang, setLang] = useState('en');
+  const [fontStep, setFontStep] = useState(1);
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
@@ -71,7 +67,7 @@ export function Header({ stepperLayout = 'side', onChangeStepperLayout }: Header
               role="tablist"
               aria-label="Language"
             >
-              {(['en', 'hi'] as const).map((code) => {
+              {(['en', 'hi']).map((code) => {
                 const active = lang === code;
                 const label = code === 'en' ? 'English' : 'हिन्दी';
                 return (
@@ -114,7 +110,7 @@ export function Header({ stepperLayout = 'side', onChangeStepperLayout }: Header
                 return (
                   <motion.button
                     key={step}
-                    onClick={() => setFontStep(step as 0 | 1 | 2)}
+                    onClick={() => setFontStep(step)}
                     aria-label={label}
                     whileHover={{ scale: 1.06 }}
                     whileTap={{ scale: 0.94 }}

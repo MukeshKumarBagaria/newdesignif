@@ -1,8 +1,4 @@
-import type { SVGProps } from 'react';
-
-type IconProps = SVGProps<SVGSVGElement> & { size?: number };
-
-const base = (size = 20): SVGProps<SVGSVGElement> => ({
+const base = (size = 20) => ({
   width: size,
   height: size,
   viewBox: '0 0 24 24',
@@ -10,44 +6,44 @@ const base = (size = 20): SVGProps<SVGSVGElement> => ({
   xmlns: 'http://www.w3.org/2000/svg',
 });
 
-export const CaretRight = ({ size = 20, ...p }: IconProps) => (
+export const CaretRight = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const CaretDown = ({ size = 20, ...p }: IconProps) => (
+export const CaretDown = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const CaretUp = ({ size = 20, ...p }: IconProps) => (
+export const CaretUp = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 15l6-6 6 6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const CaretDoubleUp = ({ size = 16, ...p }: IconProps) => (
+export const CaretDoubleUp = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 14l6-6 6 6M6 20l6-6 6 6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const CaretDoubleDown = ({ size = 16, ...p }: IconProps) => (
+export const CaretDoubleDown = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 4l6 6 6-6M6 10l6 6 6-6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const ArrowDown = ({ size = 18, ...p }: IconProps) => (
+export const ArrowDown = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 /** Filled chevron — Figma node 5938:50701 (IFMIS-NG_BPL). Next CTA 20×20, fill #255AC3 via currentColor. */
-export const NextButtonArrow = ({ size = 20, ...p }: IconProps) => (
+export const NextButtonArrow = ({ size = 20, ...p }) => (
   <svg
     width={size}
     height={size}
@@ -63,28 +59,28 @@ export const NextButtonArrow = ({ size = 20, ...p }: IconProps) => (
   </svg>
 );
 
-export const Search = ({ size = 18, ...p }: IconProps) => (
+export const Search = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={11} cy={11} r={6.5} stroke="currentColor" strokeWidth={1.8} />
     <path d="M20 20l-3.2-3.2" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" />
   </svg>
 );
 
-export const Calendar = ({ size = 20, ...p }: IconProps) => (
+export const Calendar = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3.5} y={5} width={17} height={15} rx={2.5} stroke="currentColor" strokeWidth={1.6} />
     <path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const Bell = ({ size = 20, ...p }: IconProps) => (
+export const Bell = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 9a6 6 0 1112 0v3.2c0 .8.3 1.5.8 2.1L20 16H4l1.2-1.7c.5-.6.8-1.3.8-2.1V9z" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" />
     <path d="M10 19a2 2 0 004 0" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const Settings = ({ size = 20, ...p }: IconProps) => (
+export const Settings = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={12} r={3} stroke="currentColor" strokeWidth={1.6} />
     <path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 01-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 01-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 012.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 012.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z" stroke="currentColor" strokeWidth={1.4} strokeLinejoin="round" />
@@ -94,7 +90,7 @@ export const Settings = ({ size = 20, ...p }: IconProps) => (
 export const ChevronDown = CaretDown;
 
 /* Module tile icons */
-export const IconBudget = ({ size = 22, ...p }: IconProps) => (
+export const IconBudget = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3} y={6} width={18} height={13} rx={2} stroke="currentColor" strokeWidth={1.6} />
     <path d="M3 10h18" stroke="currentColor" strokeWidth={1.6} />
@@ -102,21 +98,21 @@ export const IconBudget = ({ size = 22, ...p }: IconProps) => (
   </svg>
 );
 
-export const IconDeposit = ({ size = 22, ...p }: IconProps) => (
+export const IconDeposit = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M12 3v10m0 0l-3.5-3.5M12 13l3.5-3.5" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
     <path d="M4 14v4a2 2 0 002 2h12a2 2 0 002-2v-4" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const IconReceipt = ({ size = 22, ...p }: IconProps) => (
+export const IconReceipt = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" />
     <path d="M9 8h6M9 12h6" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const IconBMS = ({ size = 22, ...p }: IconProps) => (
+export const IconBMS = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={2.5} y={7} width={19} height={10} rx={2} stroke="currentColor" strokeWidth={1.6} />
     <circle cx={12} cy={12} r={2.2} stroke="currentColor" strokeWidth={1.6} />
@@ -124,27 +120,27 @@ export const IconBMS = ({ size = 22, ...p }: IconProps) => (
   </svg>
 );
 
-export const IconStrongRoom = ({ size = 22, ...p }: IconProps) => (
+export const IconStrongRoom = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3.5} y={3.5} width={17} height={17} rx={2} stroke="currentColor" strokeWidth={1.6} />
     <path d="M3.5 9h17M3.5 14.5h17M9 3.5v17M14.5 3.5v17" stroke="currentColor" strokeWidth={1.4} />
   </svg>
 );
 
-export const IconPension = ({ size = 22, ...p }: IconProps) => (
+export const IconPension = ({ size = 22, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M12 3c1.6 0 3 1.3 3 3v4h1.5a2 2 0 012 2v6.5a2 2 0 01-2 2h-9a2 2 0 01-2-2V12a2 2 0 012-2H9V6c0-1.7 1.4-3 3-3z" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" />
   </svg>
 );
 
-export const IconHRMS = ({ size = 20, ...p }: IconProps) => (
+export const IconHRMS = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={8} r={3.5} stroke="currentColor" strokeWidth={1.6} />
     <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const IconDashboard = ({ size = 18, ...p }: IconProps) => (
+export const IconDashboard = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3} y={3} width={7.5} height={7.5} rx={1.5} stroke="currentColor" strokeWidth={1.6} />
     <rect x={13.5} y={3} width={7.5} height={4.5} rx={1.5} stroke="currentColor" strokeWidth={1.6} />
@@ -153,35 +149,35 @@ export const IconDashboard = ({ size = 18, ...p }: IconProps) => (
   </svg>
 );
 
-export const IconWallet = ({ size = 18, ...p }: IconProps) => (
+export const IconWallet = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3} y={6} width={18} height={13} rx={2} stroke="currentColor" strokeWidth={1.6} />
     <path d="M16 13h2" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" />
   </svg>
 );
 
-export const IconBriefcase = ({ size = 18, ...p }: IconProps) => (
+export const IconBriefcase = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <rect x={3} y={7} width={18} height={13} rx={2} stroke="currentColor" strokeWidth={1.6} />
     <path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2" stroke="currentColor" strokeWidth={1.6} />
   </svg>
 );
 
-export const IconUser = ({ size = 18, ...p }: IconProps) => (
+export const IconUser = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={8} r={3.5} stroke="currentColor" strokeWidth={1.6} />
     <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const IconLink = ({ size = 16, ...p }: IconProps) => (
+export const IconLink = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M10 14a4 4 0 015.7 0l2.8-2.8a4 4 0 00-5.7-5.7L11.2 7" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
     <path d="M14 10a4 4 0 01-5.7 0L5.6 12.8a4 4 0 005.7 5.7L12.8 17" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
   </svg>
 );
 
-export const IconPaperclip = ({ size = 16, ...p }: IconProps) => (
+export const IconPaperclip = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M21 11l-8.5 8.5a5 5 0 11-7-7l8-8a3.5 3.5 0 015 5l-8 8a2 2 0 01-3-3l7-7" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
@@ -190,7 +186,7 @@ export const IconPaperclip = ({ size = 16, ...p }: IconProps) => (
 /* Phosphor PencilSimpleLine — exact 1:1 match of Figma asset 5830:83881
    (path geometry, stroke-width 2, round caps/joins). Stroke uses
    currentColor so callers can theme it via Tailwind text-* classes. */
-export const IconPen = ({ size = 24, ...p }: IconProps) => (
+export const IconPen = ({ size = 24, ...p }) => (
   <svg {...base(size)} {...p}>
     <g clipPath="url(#icon-pen-clip)">
       <path
@@ -231,7 +227,7 @@ export const IconPen = ({ size = 24, ...p }: IconProps) => (
 );
 
 /* Phosphor-style FilePlus — used by Select File button (Figma node 5830:83954) */
-export const IconFilePlus = ({ size = 20, ...p }: IconProps) => (
+export const IconFilePlus = ({ size = 20, ...p }) => (
   <svg {...base(size)} {...p}>
     <path
       d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9l-6-6z"
@@ -254,54 +250,54 @@ export const IconFilePlus = ({ size = 20, ...p }: IconProps) => (
   </svg>
 );
 
-export const IconCheck = ({ size = 16, ...p }: IconProps) => (
+export const IconCheck = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M5 12l4.5 4.5L19 7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconCheckCircle = ({ size = 16, ...p }: IconProps) => (
+export const IconCheckCircle = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={12} r={9} stroke="currentColor" strokeWidth={1.6} />
     <path d="M8 12l3 3 5-6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconTrash = ({ size = 16, ...p }: IconProps) => (
+export const IconTrash = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M4 7h16M10 7V4h4v3M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconRefresh = ({ size = 16, ...p }: IconProps) => (
+export const IconRefresh = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M4 12a8 8 0 0114.5-4.6M20 12a8 8 0 01-14.5 4.6M4 4v4h4M20 20v-4h-4" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconSave = ({ size = 16, ...p }: IconProps) => (
+export const IconSave = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M5 4h11l3 3v13a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" />
     <path d="M7 4v5h9V4M8 14h8" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconAttachFile = ({ size = 16, ...p }: IconProps) => IconPaperclip({ size, ...p });
+export const IconAttachFile = ({ size = 16, ...p }) => IconPaperclip({ size, ...p });
 
-export const IconClock = ({ size = 16, ...p }: IconProps) => (
+export const IconClock = ({ size = 16, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={12} r={8.5} stroke="currentColor" strokeWidth={1.6} />
     <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-export const IconPlus = ({ size = 14, ...p }: IconProps) => (
+export const IconPlus = ({ size = 14, ...p }) => (
   <svg {...base(size)} {...p}>
     <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
   </svg>
 );
 
-export const IconGlobe = ({ size = 18, ...p }: IconProps) => (
+export const IconGlobe = ({ size = 18, ...p }) => (
   <svg {...base(size)} {...p}>
     <circle cx={12} cy={12} r={9} stroke="currentColor" strokeWidth={1.6} />
     <path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" stroke="currentColor" strokeWidth={1.4} />

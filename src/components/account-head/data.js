@@ -8,35 +8,9 @@
  * inside `MajorHeadSection` / `SubMajorHeadSection` / `MinorHeadSection`.
  */
 
-export type Mode = 'create' | 'use';
-export type HierarchyStatus = 'CREATED' | 'MAPPED' | null;
-
 /* ───────── Existing options (for "Use Existing …" dropdowns) ───────── */
 
-export type MajorHeadOption = {
-  id: string;
-  code: string;
-  name: string;
-  sector: string;
-  subSector?: string;
-};
-
-export type SubMajorHeadOption = {
-  id: string;
-  parentMajorId: string;
-  code: string;
-  name: string;
-};
-
-export type MinorHeadOption = {
-  id: string;
-  parentMajorId: string;
-  parentSubMajorId: string;
-  code: string;
-  name: string;
-};
-
-export const MAJOR_HEADS: MajorHeadOption[] = [
+export const MAJOR_HEADS = [
   { id: 'mh-2202', code: '2202', name: 'Education, Sports, Art and Culture', sector: 'Social Services', subSector: 'Education' },
   { id: 'mh-2210', code: '2210', name: 'Medical and Public Health',          sector: 'Social Services', subSector: 'Health' },
   { id: 'mh-2215', code: '2215', name: 'Water Supply and Sanitation',         sector: 'Social Services', subSector: 'Urban Development' },
@@ -46,7 +20,7 @@ export const MAJOR_HEADS: MajorHeadOption[] = [
   { id: 'mh-2055', code: '2055', name: 'Police',                              sector: 'General Services', subSector: 'Administrative Services' },
 ];
 
-export const SUB_MAJOR_HEADS: SubMajorHeadOption[] = [
+export const SUB_MAJOR_HEADS = [
   { id: 'sm-2202-01', parentMajorId: 'mh-2202', code: '01', name: 'Elementary Education' },
   { id: 'sm-2202-02', parentMajorId: 'mh-2202', code: '02', name: 'Secondary Education' },
   { id: 'sm-2202-03', parentMajorId: 'mh-2202', code: '03', name: 'University and Higher Education' },
@@ -67,7 +41,7 @@ export const SUB_MAJOR_HEADS: SubMajorHeadOption[] = [
   { id: 'sm-2055-00', parentMajorId: 'mh-2055', code: '00', name: 'General' },
 ];
 
-export const MINOR_HEADS: MinorHeadOption[] = [
+export const MINOR_HEADS = [
   { id: 'mn-2202-01-101', parentMajorId: 'mh-2202', parentSubMajorId: 'sm-2202-01', code: '101', name: 'Government Primary Schools' },
   { id: 'mn-2202-01-102', parentMajorId: 'mh-2202', parentSubMajorId: 'sm-2202-01', code: '102', name: 'Assistance to Non-Government Primary Schools' },
   { id: 'mn-2202-01-104', parentMajorId: 'mh-2202', parentSubMajorId: 'sm-2202-01', code: '104', name: 'Inspection' },
@@ -95,7 +69,7 @@ export const SECTORS = [
   'Public Debt',
 ];
 
-export const SUB_SECTORS: Record<string, string[]> = {
+export const SUB_SECTORS = {
   'General Services': ['Organs of State', 'Fiscal Services', 'Administrative Services', 'Pensions and Misc'],
   'Social Services':  ['Education', 'Health', 'Water Supply and Sanitation', 'Welfare', 'Labour and Employment'],
   'Economic Services':['Agriculture', 'Rural Development', 'Industry and Minerals', 'Transport', 'Energy'],
@@ -105,23 +79,7 @@ export const SUB_SECTORS: Record<string, string[]> = {
 
 /* ───────── Form payload types ───────── */
 
-export type MajorHeadForm = {
-  code: string;
-  englishName: string;
-  hindiName: string;
-  sector: string;
-  subSector: string;
-  remarks: string;
-};
-
-export type ChildHeadForm = {
-  code: string;
-  englishName: string;
-  hindiName: string;
-  remarks: string;
-};
-
-export const emptyMajorForm: MajorHeadForm = {
+export const emptyMajorForm = {
   code: '',
   englishName: '',
   hindiName: '',
@@ -130,36 +88,26 @@ export const emptyMajorForm: MajorHeadForm = {
   remarks: '',
 };
 
-export const emptyChildForm: ChildHeadForm = {
+export const emptyChildForm = {
   code: '',
   englishName: '',
   hindiName: '',
   remarks: '',
 };
 
-/* ───────── Section state held by parent ───────── */
-
-export type MajorHeadState =
-  | { mode: 'use'; selectedId: string | null }
-  | { mode: 'create'; form: MajorHeadForm };
-
-export type ChildHeadState =
-  | { mode: 'use'; selectedId: string | null }
-  | { mode: 'create'; form: ChildHeadForm };
-
 /** Helper — does a section have a usable selection/payload yet? */
-export function isMajorComplete(s: MajorHeadState): boolean {
+export function isMajorComplete(s) {
   if (s.mode === 'use') return !!s.selectedId;
   return s.form.code.trim().length >= 4 && !!s.form.englishName.trim();
 }
 
-export function isChildComplete(s: ChildHeadState): boolean {
+export function isChildComplete(s) {
   if (s.mode === 'use') return !!s.selectedId;
   return s.form.code.trim().length >= 2 && !!s.form.englishName.trim();
 }
 
 /** Map a section state to the badge it should display in the summary. */
-export function badgeFor(s: MajorHeadState | ChildHeadState | null): HierarchyStatus {
+export function badgeFor(s) {
   if (!s) return null;
   if (s.mode === 'create') {
     // Show CREATED only once required fields are present.

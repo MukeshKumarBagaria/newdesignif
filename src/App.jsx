@@ -10,8 +10,6 @@ import {
   emptyMajorForm,
   isChildComplete,
   isMajorComplete,
-  type ChildHeadState,
-  type MajorHeadState,
 } from './components/account-head/data';
 import { HierarchyBadge } from './components/account-head/primitives';
 import { MajorHeadSection } from './components/account-head/MajorHeadSection';
@@ -19,11 +17,10 @@ import { SubMajorHeadSection } from './components/account-head/SubMajorHeadSecti
 import { MinorHeadSection } from './components/account-head/MinorHeadSection';
 import { ObjectDetailHeadScreen } from './components/account-head/ObjectDetailHeadScreen';
 import { SchemeCreationScreen } from './components/account-head/SchemeCreationScreen';
+import { AccountHeadReviewScreen } from './components/account-head/AccountHeadReviewScreen';
+import { ObjectDetailReviewScreen } from './components/account-head/ObjectDetailReviewScreen';
 
-type SectionId = 'major' | 'subMajor' | 'minor';
-type CreationTarget = 'major' | 'subMajor' | 'minor';
-
-const sectionDefs: { id: SectionId; index: string; label: string }[] = [
+const sectionDefs = [
   { id: 'major',    index: '01', label: 'Major Head'     },
   { id: 'subMajor', index: '02', label: 'Sub Major Head' },
   { id: 'minor',    index: '03', label: 'Minor Head'     },
@@ -32,18 +29,18 @@ const sectionDefs: { id: SectionId; index: string; label: string }[] = [
 export default function App() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [moduleOpen, setModuleOpen] = useState(false);
-  const [activeMenuKey, setActiveMenuKey] = useState('Dashboard');
-  const [creationTarget, setCreationTarget] = useState<CreationTarget>('minor');
+  const [activeMenuKey, setActiveMenuKey] = useState('Account Head / Creator');
+  const [creationTarget, setCreationTarget] = useState('minor');
 
   /* Section state ─────────────────────────────────────────────── */
-  const [major, setMajor] = useState<MajorHeadState>({ mode: 'create', form: emptyMajorForm });
-  const [subMajor, setSubMajor] = useState<ChildHeadState>({ mode: 'create', form: emptyChildForm });
-  const [minor, setMinor] = useState<ChildHeadState>({ mode: 'create', form: emptyChildForm });
+  const [major, setMajor] = useState({ mode: 'create', form: emptyMajorForm });
+  const [subMajor, setSubMajor] = useState({ mode: 'create', form: emptyChildForm });
+  const [minor, setMinor] = useState({ mode: 'create', form: emptyChildForm });
 
   /* Accordion expansion ───────────────────────────────────────── */
-  const [open, setOpen] = useState<Set<SectionId>>(new Set(['major']));
+  const [open, setOpen] = useState(new Set(['major']));
 
-  const toggleSection = (id: SectionId) => {
+  const toggleSection = (id) => {
     setOpen((prev) => {
       // Keep Major Head open until a valid parent context exists.
       if (id === 'major' && prev.has('major') && !majorComplete) {
@@ -78,7 +75,7 @@ export default function App() {
 
   /* When Major becomes complete, auto-open Sub Major (only the
      first time, if it hasn't been opened yet). Same for Minor. */
-  const autoOpen = (id: SectionId) =>
+  const autoOpen = (id) =>
     setOpen((prev) => {
       if (prev.has(id)) return prev;
       const next = new Set(prev);
@@ -111,8 +108,16 @@ export default function App() {
         />
 
         {/* Main content */}
-        {activeMenuKey === 'Object + Detail Head' ? (
+        {activeMenuKey === 'Object + Detail Head / Creator' || activeMenuKey === 'Object + Detail Head' ? (
           <ObjectDetailHeadScreen />
+        ) : activeMenuKey === 'Object + Detail Head / Verifier' ? (
+          <ObjectDetailReviewScreen role="verifier" />
+        ) : activeMenuKey === 'Object + Detail Head / Approver' ? (
+          <ObjectDetailReviewScreen role="approver" />
+        ) : activeMenuKey === 'Account Head / Verifier' ? (
+          <AccountHeadReviewScreen role="verifier" />
+        ) : activeMenuKey === 'Account Head / Approver' ? (
+          <AccountHeadReviewScreen role="approver" />
         ) : activeMenuKey === 'Scheme Creation' ? (
           <SchemeCreationScreen />
         ) : (
@@ -175,7 +180,7 @@ export default function App() {
                         role="checkbox"
                         aria-checked={selected}
                         onClick={() => {
-                          setCreationTarget(item.id as CreationTarget);
+                          setCreationTarget(item.id);
                           setOpen(new Set(['major']));
                         }}
                         className="inline-flex items-center gap-2 rounded-full font-poppins transition-all hover:brightness-95"
@@ -480,7 +485,7 @@ export default function App() {
  *  Helpers — section subtitle + footer status copy
  *  ────────────────────────────────────────────────────────────────── */
 
-function sectionSubtitle(id: SectionId, state: MajorHeadState | ChildHeadState): string | null {
+function sectionSubtitle(id, state) {
   if (state.mode === 'use') {
     if (!state.selectedId) return 'Use Existing — no selection yet';
     return 'Use Existing — record will be mapped';
@@ -494,12 +499,8 @@ function sectionSubtitle(id: SectionId, state: MajorHeadState | ChildHeadState):
   return `Create New — drafting ${head}`;
 }
 
-function workflowStatusText(
-  major: MajorHeadState,
-  subMajor: ChildHeadState,
-  minor: ChildHeadState
-): string {
-  const parts: string[] = [];
+function workflowStatusText(major, subMajor, minor) {
+  const parts = [];
   const m = badgeFor(major);
   const s = badgeFor(subMajor);
   const n = badgeFor(minor);
